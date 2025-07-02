@@ -1,0 +1,307 @@
+import { useState, useEffect } from "react";
+import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
+import toast from "react-hot-toast";
+import axiosInstance from "../../../utils/AxiosInstance";
+import coffeeBG from "../../../assets/coffee.jpg";
+import { PlusIcon } from "@heroicons/react/24/outline";
+import { Link } from "react-router-dom";
+import Pagination from '../../../components/Pagination';
+import { useToast } from "../../../context/ToastContext";
+
+const PAGE_SIZE = 10;
+
+const WarehouseList = () => {
+  const [warehouses, setWarehouses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    county: "",
+    sub_county: "",
+    licence_number: "",
+    is_active: true,
+  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const { showToast } = useToast();
+
+  useEffect(() => {
+    fetchWarehouses();
+  }, []);
+
+  const fetchWarehouses = async () => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.get("warehouse/warehouses/");
+      setWarehouses(response.data);
+      setError(null);
+    } catch (error) {
+      setError(error.response?.data?.message || "Failed to fetch warehouses");
+      showToast(error.response?.data?.message || "Failed to fetch warehouses", "error");
+    }
+    setLoading(false);
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axiosInstance.post("warehouse/warehouses/", formData);
+      showToast("Warehouse created successfully", "success");
+      setIsModalOpen(false);
+      setFormData({
+        name: "",
+        county: "",
+        sub_county: "",
+        licence_number: "",
+        is_active: true,
+      });
+      fetchWarehouses();
+    } catch (error) {
+      showToast(error.response?.data?.message || "Failed to create warehouse", "error");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this warehouse?"))
+      return;
+    try {
+      await axiosInstance.delete(`warehouse/warehouses/${id}/`);
+      showToast("Warehouse deleted successfully", "success");
+      fetchWarehouses();
+    } catch (error) {
+      showToast(error.response?.data?.message || "Failed to delete warehouse", "error");
+    }
+  };
+
+  const totalPages = Math.ceil(warehouses.length / PAGE_SIZE);
+  const paginatedWarehouses = warehouses.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
+
+  return (
+    <div className="space-y-6 p-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Mill Warehouse Management
+          </h1>
+          <p className="mt-1 text-sm text-gray-500">
+            View, add, edit, and manage all coffee mill warehouses in the
+            system.
+          </p>
+        </div>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium bg-teal-600 text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+        >
+          <PlusIcon className="h-5 w-5 mr-2" />
+          Add Warehouse
+        </button>
+      </div>
+
+      {error && (
+        <div className="rounded-md bg-red-50 p-4">
+          <p className="text-sm font-medium text-red-800">{error}</p>
+        </div>
+      )}
+
+      <div className="bg-white shadow overflow-x-auto sm:rounded-lg">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Name
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Status
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                County
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Sub County
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Licence Number
+              </th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {loading ? (
+              <tr>
+                <td colSpan={6} className="px-6 py-4 text-center">
+                  Loading...
+                </td>
+              </tr>
+            ) : (
+              paginatedWarehouses.map((warehouse) => (
+                <tr key={warehouse.id}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {warehouse.name}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span
+                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        warehouse.is_active
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {warehouse.is_active ? "Active" : "Inactive"}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {warehouse.county}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {warehouse.sub_county}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {warehouse.licence_number}
+                  </td>
+
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <Link
+                      to={`/admin/warehouses/${warehouse.id}`}
+                      className="px-3 py-1 rounded bg-amber-100 text-amber-700 hover:bg-amber-200 text-xs font-semibold"
+                    >
+                      View
+                    </Link>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {!loading && warehouses.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalResults={warehouses.length}
+          pageSize={PAGE_SIZE}
+          onPageChange={setCurrentPage}
+        />
+      )}
+
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center"
+          style={{
+            backgroundImage: `url(${coffeeBG})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backdropFilter: "blur(8px)",
+            WebkitBackdropFilter: "blur(8px)",
+          }}
+        >
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h2 className="text-lg font-medium mb-4">Add New Warehouse</h2>
+            <form onSubmit={handleFormSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  className="mt-1 block w-full rounded-md border border-amber-300 placeholder-gray-800 text-black px-3 py-2 focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
+                  placeholder="Name"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  County
+                </label>
+                <input
+                  type="text"
+                  name="county"
+                  value={formData.county}
+                  onChange={(e) =>
+                    setFormData({ ...formData, county: e.target.value })
+                  }
+                  className="mt-1 block w-full rounded-md border border-amber-300 placeholder-gray-800 text-black px-3 py-2 focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
+                  placeholder="County"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Sub County
+                </label>
+                <input
+                  type="text"
+                  name="sub_county"
+                  value={formData.sub_county}
+                  onChange={(e) =>
+                    setFormData({ ...formData, sub_county: e.target.value })
+                  }
+                  className="mt-1 block w-full rounded-md border border-amber-300 placeholder-gray-800 text-black px-3 py-2 focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
+                  placeholder="Sub County"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Licence Number
+                </label>
+                <input
+                  type="text"
+                  name="licence_number"
+                  value={formData.licence_number}
+                  onChange={(e) =>
+                    setFormData({ ...formData, licence_number: e.target.value })
+                  }
+                  className="mt-1 block w-full rounded-md border border-amber-300 placeholder-gray-800 text-black px-3 py-2 focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
+                  placeholder="Licence Number"
+                  required
+                />
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  name="is_active"
+                  checked={formData.is_active}
+                  onChange={(e) =>
+                    setFormData({ ...formData, is_active: e.target.checked })
+                  }
+                  className="h-4 w-4 text-blue-600 border-amber-300 rounded focus:ring-amber-600"
+                />
+                <label className="ml-2 block text-sm text-gray-900">
+                  Active
+                </label>
+              </div>
+              <div className="flex justify-end space-x-3 mt-6">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default WarehouseList;
