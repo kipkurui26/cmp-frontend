@@ -4,7 +4,7 @@ import axios from "axios";
 export let showGlobalToast = null;
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.REACT_APP_API_URL || "http://localhost:8000/api",
+  baseURL: import.meta.env.REACT_APP_API_URL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -142,3 +142,4 @@ export const setupTokenRefresh = () => {
 };
 
 export default axiosInstance;
+

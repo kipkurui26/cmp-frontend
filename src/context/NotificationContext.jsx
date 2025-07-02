@@ -31,8 +31,7 @@ export const NotificationProvider = ({ children }) => {
   }, [fetchNotifications]);
 
   const setupWebSocket = useCallback(() => {
-    const wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-    const wsUrl = `${wsProtocol}://${window.location.hostname}:8000/ws/notifications/`;
+    const wsUrl = import.meta.env.VITE_WS_URL;
     const socket = new window.WebSocket(wsUrl);
     setWs(socket);
 
