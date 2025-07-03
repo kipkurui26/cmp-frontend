@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axiosInstance from '../utils/AxiosInstance';
+import { useAuth } from '../context/AuthContext'; // adjust path as needed
 
 const NotificationContext = createContext();
 
@@ -13,12 +14,13 @@ export const NotificationProvider = ({ children }) => {
   const reconnectDelay = 3000;
   const maxRetries = 10;
   const retryRef = React.useRef(0);
+  const { isAuthenticated } = useAuth();
 
   const fetchNotifications = useCallback(async () => {
     setLoading(true);
     try {
       const res = await axiosInstance.get('/auth/notifications/');
-      setNotifications(res.data);
+      setNotifications(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       // Optionally handle error
     } finally {
@@ -66,9 +68,10 @@ export const NotificationProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
+    if (!isAuthenticated) return;
     const socket = setupWebSocket();
     return () => socket && socket.close();
-  }, [setupWebSocket]);
+  }, [setupWebSocket, isAuthenticated]);
 
   const markAsRead = async (id) => {
     try {
@@ -79,7 +82,9 @@ export const NotificationProvider = ({ children }) => {
     }
   };
 
-  const unreadCount = notifications.filter(n => !n.is_read).length;
+  const unreadCount = Array.isArray(notifications)
+    ? notifications.filter(n => !n.is_read).length
+    : 0;
 
   return (
     <NotificationContext.Provider value={{ notifications, unreadCount, loading, fetchNotifications, markAsRead, wsConnected }}>
