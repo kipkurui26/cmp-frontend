@@ -8,9 +8,7 @@ const axiosInstance = axios.create({
   withCredentials: true, 
   headers: {
     "Content-Type": "application/json",
-
-    "Accept": "application/json",
-    "Access-Control-Allow-Credentials": "true"
+    "Accept": "application/json"
   },
 });
 // Request interceptor
@@ -25,10 +23,6 @@ axiosInstance.interceptors.request.use(
     if (csrfToken) {
       config.headers['X-CSRFToken'] = csrfToken;
     }
-    
-    // Add these headers to every request
-    config.headers['Access-Control-Allow-Origin'] = 'https://coffee-permit.vercel.app';
-    config.headers['Access-Control-Allow-Credentials'] = 'true';
     
     return config;
   },
