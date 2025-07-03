@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axiosInstance, { setupTokenRefresh } from '../utils/AxiosInstance';
+import axiosInstance, { setupTokenRefresh, fetchCsrfToken } from '../utils/AxiosInstance';
 import { useToast } from '../context/ToastContext';
 
 const AuthContext = createContext(null);
@@ -13,31 +13,31 @@ export const AuthProvider = ({ children }) => {
   // Check authentication status on mount
   useEffect(() => {
     // Always fetch CSRF token on mount
-    axiosInstance.get('/auth/csrf/').finally(() => {
-    const checkAuth = async () => {
-      // Skip auth check if we're on the login or register page
-      if (['/login', '/register'].includes(window.location.pathname)) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const response = await axiosInstance.get('/auth/user/');
-        setUser(response.data);
-        setIsAuthenticated(true);
-      } catch (error) {
-        setUser(null);
-        setIsAuthenticated(false);
-        showToast("Authentication failed. Please log in again.", "error");
-        // Redirect to login only if not already there
-        if (!window.location.pathname.includes('/login')) {
-            window.location.href = '/login';
+    fetchCsrfToken().finally(() => {
+      const checkAuth = async () => {
+        // Skip auth check if we're on the login or register page
+        if (['/login', '/register'].includes(window.location.pathname)) {
+          setLoading(false);
+          return;
         }
-      } finally {
-        setLoading(false);
-      }
-    };
-    checkAuth();
+
+        try {
+          const response = await axiosInstance.get('/auth/user/');
+          setUser(response.data);
+          setIsAuthenticated(true);
+        } catch (error) {
+          setUser(null);
+          setIsAuthenticated(false);
+          showToast("Authentication failed. Please log in again.", "error");
+          // Redirect to login only if not already there
+          if (!window.location.pathname.includes('/login')) {
+              window.location.href = '/login';
+          }
+        } finally {
+          setLoading(false);
+        }
+      };
+      checkAuth();
     });
   }, []);
 

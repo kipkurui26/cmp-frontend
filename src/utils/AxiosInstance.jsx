@@ -3,6 +3,20 @@ import axios from "axios";
 // Global toast trigger for use outside React components
 export let showGlobalToast = null;
 
+let csrfToken = null;
+
+export const fetchCsrfToken = async () => {
+  try {
+    const response = await axiosInstance.get("/auth/csrf/");
+    if (response.data && response.data.csrfToken) {
+      csrfToken = response.data.csrfToken;
+    }
+  } catch (error) {
+    // Optionally handle error
+    csrfToken = null;
+  }
+};
+
 const axiosInstance = axios.create({
   baseURL: "https://cmp-backend-kipkurui269830-vkrh434l.leapcell.dev/api",
   withCredentials: true, 
@@ -11,19 +25,13 @@ const axiosInstance = axios.create({
     "Accept": "application/json"
   },
 });
+
 // Request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
-    // Get CSRF token from cookie
-    const csrfToken = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('csrftoken='))
-      ?.split('=')[1];
-    
     if (csrfToken) {
       config.headers['X-CSRFToken'] = csrfToken;
     }
-    
     return config;
   },
   (error) => {

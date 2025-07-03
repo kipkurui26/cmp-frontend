@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { GiCoffeeBeans } from 'react-icons/gi';
-import axiosInstance from '../../utils/AxiosInstance'
+import axiosInstance, { fetchCsrfToken } from '../../utils/AxiosInstance'
 import { useAuth } from "../../context/AuthContext"; 
 import { useToast } from "../../context/ToastContext";
 import coffeeImage from '../../assets/coffee.jpg';
@@ -20,7 +20,7 @@ const Login = () => {
     try {
       setLoading(true);
       setError('');
-      
+      await fetchCsrfToken();
       const loginData = {
         login_field: data.login_field,
         password: data.password
