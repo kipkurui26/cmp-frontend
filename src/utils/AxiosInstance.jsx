@@ -5,13 +5,14 @@ export let showGlobalToast = null;
 
 const axiosInstance = axios.create({
   baseURL: "https://cmp-backend-kipkurui269830-vkrh434l.leapcell.dev/api",
-  // baseURL: import.meta.env.REACT_APP_API_URL,
-  withCredentials: true,
+  withCredentials: true, 
   headers: {
     "Content-Type": "application/json",
+
+    "Accept": "application/json",
+    "Access-Control-Allow-Credentials": "true"
   },
 });
-
 // Request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
@@ -24,6 +25,11 @@ axiosInstance.interceptors.request.use(
     if (csrfToken) {
       config.headers['X-CSRFToken'] = csrfToken;
     }
+    
+    // Add these headers to every request
+    config.headers['Access-Control-Allow-Origin'] = 'https://coffee-permit.vercel.app';
+    config.headers['Access-Control-Allow-Credentials'] = 'true';
+    
     return config;
   },
   (error) => {
