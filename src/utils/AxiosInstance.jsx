@@ -18,7 +18,7 @@ export const fetchCsrfToken = async () => {
 };
 
 const axiosInstance = axios.create({
-  baseURL: "https://cmp-backend-kipkurui269830-vkrh434l.leapcell.dev/api",
+  baseURL: "https://cmp-server-kaelstormproxy9126-0gw8s8yb.leapcell.dev/api",
   withCredentials: true, 
   headers: {
     "Content-Type": "application/json",

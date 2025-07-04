@@ -33,7 +33,7 @@ export const NotificationProvider = ({ children }) => {
   }, [fetchNotifications]);
 
   const setupWebSocket = useCallback(() => {
-    const wsUrl = import.meta.env.VITE_WS_URL;
+    const wsUrl = "wss://cmp-server-kaelstormproxy9126-0gw8s8yb.leapcell.dev/ws/notifications/";
     const socket = new window.WebSocket(wsUrl);
     setWs(socket);
 
