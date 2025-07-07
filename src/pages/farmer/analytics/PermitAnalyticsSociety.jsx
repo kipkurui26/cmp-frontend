@@ -1,10 +1,18 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ResponsiveContainer } from 'recharts';
+// import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ResponsiveContainer } from 'recharts';
 import axiosInstance from '../../../utils/AxiosInstance';
 import PermitAnalyticsCharts from '../../admin/analytics/PermitAnalyticsCharts';
 import dayjs from 'dayjs';
 import { getPeriodArray, formatPeriodLabel } from '../../../utils/periodUtils';
 import DownloadReportModal from '../../../components/exports/DownloadReportModal';
+import TopPerformersChart from '../../admin/analytics/TopPerformersChart';
+
+const Spinner = () => (
+  <div className="flex justify-center items-center py-8">
+    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-amber-600"></div>
+    <span className="ml-2 text-amber-700">Loading...</span>
+  </div>
+);
 
 const PermitAnalyticsFarmer = ({ societyId }) => {
   const [factories, setFactories] = useState([]);
@@ -77,6 +85,17 @@ const PermitAnalyticsFarmer = ({ societyId }) => {
       .catch(() => setTopFactories([]));
   }, [societyId, selectedFactory, dateRange]);
 
+  // Filter out invalid data for charts
+  const validTopGrades = topGrades.filter(
+    item => typeof item.totalKg === 'number' && !isNaN(item.totalKg)
+  );
+  const validTopFactories = topFactories.filter(
+    item => typeof item.totalKg === 'number' && !isNaN(item.totalKg)
+  );
+
+  // Dummy axis config for loading state
+  const dummyAxis = { domain: [0, 100], tickCount: 4 };
+
   // ... (UI code for filters, charts, etc. similar to admin, but with societyId fixed)
 
   return (
@@ -120,17 +139,66 @@ const PermitAnalyticsFarmer = ({ societyId }) => {
       />
       {/* Main Chart */}
       <div>
-        {/* Reuse your BarChart code here, using lineData */}
+        {loading ? <Spinner /> : lineData.length > 0 ? (
+          // Render your BarChart here with lineData
+          <div>BarChart goes here</div>
+        ) : (
+          <div className="text-gray-500 text-center py-8">No data available for current filters.</div>
+        )}
       </div>
       {/* Top Grades */}
       <div>
         <h3>Top 3 Coffee Grades</h3>
-        {/* BarChart for topGrades */}
+        {loading ? (
+          <TopPerformersChart
+            data={[]}
+            xAxisKey="totalKg"
+            yAxisKey="grade"
+            barColor="#8884d8"
+            title="Top 3 Coffee Grades"
+            xAxisLabel="Total Coffee (kg)"
+            yAxisLabel="Grade"
+            domain={dummyAxis.domain}
+            tickCount={dummyAxis.tickCount}
+            barLabelFormatter={{
+              fill: "#374151",
+              fontWeight: 700,
+              fontSize: 15,
+              formatter: (value) => `${value} kg`,
+            }}
+          />
+        ) : validTopGrades.length > 0 ? (
+          <div>BarChart for topGrades goes here</div>
+        ) : (
+          <div className="text-gray-500 text-center py-8">No valid data available for current filters.</div>
+        )}
       </div>
       {/* Top Factories */}
       <div>
         <h3>Top 3 Factories</h3>
-        {/* BarChart for topFactories */}
+        {loading ? (
+          <TopPerformersChart
+            data={[]}
+            xAxisKey="totalKg"
+            yAxisKey="factory"
+            barColor="#82ca9d"
+            title="Top 3 Factories"
+            xAxisLabel="Total Coffee (kg)"
+            yAxisLabel="Factory"
+            domain={dummyAxis.domain}
+            tickCount={dummyAxis.tickCount}
+            barLabelFormatter={{
+              fill: "#374151",
+              fontWeight: 700,
+              fontSize: 15,
+              formatter: (value) => `${value} kg`,
+            }}
+          />
+        ) : validTopFactories.length > 0 ? (
+          <div>BarChart for topFactories goes here</div>
+        ) : (
+          <div className="text-gray-500 text-center py-8">No valid data available for current filters.</div>
+        )}
       </div>
       {/* Cumulative Approved/Rejected Permits */}
       <PermitAnalyticsCharts

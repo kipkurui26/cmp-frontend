@@ -186,6 +186,14 @@ const FarmerAnalytics = () => {
     .sort((a, b) => b.totalKg - a.totalKg)
     .slice(0, 3);
 
+  // Filter out invalid data for charts
+  const validFilteredTopGrades = filteredTopGrades.filter(
+    item => typeof item.totalKg === 'number' && !isNaN(item.totalKg)
+  );
+  const validFilteredTopFactories = topFactories.filter(
+    item => typeof item.totalKg === 'number' && !isNaN(item.totalKg)
+  );
+
   // If backend supports grade filtering for factories, apply similar logic here
   const filteredTopFactories = topFactories;
 
@@ -344,14 +352,28 @@ const FarmerAnalytics = () => {
 
       {/* Main Bar Chart */}
       <div className="mb-8">
-        {loading && <div>Loading...</div>}
-        {error && <div className="text-red-500">{error}</div>}
-        {!loading && !error && filledLineData.length === 0 && (
+        {loading ? (
+          <BarChartWidget
+            data={[]}
+            xAxisKey="period"
+            yAxisKeys={allGrades.filter(
+              (grade) => !excludedGrades.includes(grade)
+            )}
+            colors={gradeColors}
+            title="My Coffee Transported Over Time"
+            height={350}
+            barProps={{
+              isAnimationActive: false,
+            }}
+            xTickFormatter={period => formatPeriodLabel(period, dateRange.granularity)}
+          />
+        ) : error ? (
+          <div className="text-red-500">{error}</div>
+        ) : filledLineData.length === 0 ? (
           <div className="text-gray-500 text-center py-8">
             No data available for current filters.
           </div>
-        )}
-        {!loading && !error && filledLineData.length > 0 && (
+        ) : (
           <BarChartWidget
             data={filledLineData}
             xAxisKey="period"
@@ -369,44 +391,32 @@ const FarmerAnalytics = () => {
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Top Grades */}
-        <TopPerformersChart
-          data={filteredTopGrades}
-          xAxisKey="totalKg"
-          yAxisKey="grade"
-          barColor="#8884d8"
-          title="Top 3 Coffee Grade Performers"
-          xAxisLabel="Total Coffee (kg)"
-          yAxisLabel="Grade"
-          domain={gradesAxis.domain}
-          tickCount={gradesAxis.tickCount}
-          barLabelFormatter={{
-            fill: "#374151",
-            fontWeight: 700,
-            fontSize: 15,
-            formatter: (value) => `${value} kg`,
-          }}
-        />
-
-        {/* Top Factories */}
-        <TopPerformersChart
-          data={filteredTopFactories}
-          xAxisKey="totalKg"
-          yAxisKey="factory"
-          barColor="#82ca9d"
-          title="Top 3 Performing Factories"
-          xAxisLabel="Total Coffee (kg)"
-          yAxisLabel="Factory"
-          domain={factoriesAxis.domain}
-          tickCount={factoriesAxis.tickCount}
-          barLabelFormatter={{
-            fill: "#374151",
-            fontWeight: 700,
-            fontSize: 15,
-            formatter: (value) => `${value} kg`,
-          }}
-        />
+      {/* Top 3 Coffee Grades and Top 3 Factories for this Society */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+        {/* Top 3 Coffee Grades */}
+        <div className="bg-white rounded-lg shadow p-4 flex flex-col justify-center">
+          <TopPerformersChart
+            data={validFilteredTopGrades}
+            valueKey="totalKg"
+            nameKey="grade"
+            barColor="#8884d8"
+            title="Top 3 Coffee Grades in Society"
+            xAxisLabel="Total Weight (KGs)"
+            yAxisLabel="Grade"
+          />
+        </div>
+        {/* Top 3 Factories */}
+        <div className="bg-white rounded-lg shadow p-4 flex flex-col justify-center">
+          <TopPerformersChart
+            data={validFilteredTopFactories}
+            valueKey="totalKg"
+            nameKey="factory"
+            barColor="#82ca9d"
+            title="Top 3 Factories in Society"
+            xAxisLabel="Total Weight (KGs)"
+            yAxisLabel="Factory"
+          />
+        </div>
       </div>
 
       <ExportModal

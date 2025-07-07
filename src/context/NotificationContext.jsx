@@ -33,7 +33,8 @@ export const NotificationProvider = ({ children }) => {
   }, [fetchNotifications]);
 
   const setupWebSocket = useCallback(() => {
-    const wsUrl = "wss://cmp-server-kaelstormproxy9126-0gw8s8yb.leapcell.dev/ws/notifications/";
+    // const wsUrl = "wss://cmp-server-kaelstormproxy9126-0gw8s8yb.leapcell.dev/ws/notifications/";
+    const wsUrl = "ws://localhost:8000/ws/notifications/";
     const socket = new window.WebSocket(wsUrl);
     setWs(socket);
 

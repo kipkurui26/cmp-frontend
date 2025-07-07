@@ -32,21 +32,44 @@ function getDateRangeArray(start, end) {
 // Function to calculate the X-axis and Y-axis
 function getNiceDomainAndTicks(data, dataKey, minTicks = 4, step = 1000) {
   if (!data || data.length === 0) return { domain: [0, step], tickCount: minTicks };
-  const max = Math.max(...data.map(d => d[dataKey] || 0));
-  if (max === 0) return { domain: [0, step], tickCount: minTicks };
+  const max = Math.max(...data.map(d => Number(d[dataKey]) || 0));
+  if (!isFinite(max) || max <= 0) return { domain: [0, step], tickCount: minTicks };
   const niceStep = step || Math.pow(10, Math.floor(Math.log10(max)));
-  // Round up max to nearest niceStep
   const niceMax = Math.ceil(max / niceStep) * niceStep;
   const tickCount = Math.max(minTicks, Math.ceil(niceMax / niceStep) + 1);
   return { domain: [0, niceMax], tickCount };
 }
 
+// Simple ErrorBoundary for chart sections
+class ChartErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+  componentDidCatch(error, errorInfo) {
+    // You can log error here
+    console.error('Chart error:', error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return <div className="text-red-500">Chart failed to load</div>;
+    }
+    return this.props.children;
+  }
+}
+
+const Spinner = () => (
+  <div className="flex justify-center items-center py-8">
+    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-amber-600"></div>
+    <span className="ml-2 text-amber-700">Loading...</span>
+  </div>
+);
+
 const CoffeeAnalysisCharts = () => {
   const { user } = useAuth();
-  // Log the current date when the component mounts
-  useEffect(() => {
-    console.log('Current date:', dayjs().format('YYYY-MM-DD'));
-  }, []);
 
   // Filter state
   const [selectedSociety, setSelectedSociety] = useState('');
@@ -68,36 +91,13 @@ const CoffeeAnalysisCharts = () => {
   const [csvHeaders, setCsvHeaders] = useState([]);
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
 
-  // Pagination state for main analytics
-  const [mainPage, setMainPage] = useState(1);
-  const [mainPageSize, setMainPageSize] = useState(100);
-  const [mainTotal, setMainTotal] = useState(0);
-  const [mainNext, setMainNext] = useState(null);
-  const [mainPrev, setMainPrev] = useState(null);
-
-  // Pagination state for top_societies
-  const [societiesPage, setSocietiesPage] = useState(1);
-  const [societiesPageSize, setSocietiesPageSize] = useState(100);
-  const [societiesTotal, setSocietiesTotal] = useState(0);
-  const [societiesNext, setSocietiesNext] = useState(null);
-  const [societiesPrev, setSocietiesPrev] = useState(null);
-
   // Pagination state for top_grades
   const [gradesPage, setGradesPage] = useState(1);
   const [gradesPageSize, setGradesPageSize] = useState(100);
-  const [gradesTotal, setGradesTotal] = useState(0);
-  const [gradesNext, setGradesNext] = useState(null);
-  const [gradesPrev, setGradesPrev] = useState(null);
 
   // Pagination state for top_factories
   const [factoriesPage, setFactoriesPage] = useState(1);
   const [factoriesPageSize, setFactoriesPageSize] = useState(100);
-  const [factoriesTotal, setFactoriesTotal] = useState(0);
-  const [factoriesNext, setFactoriesNext] = useState(null);
-  const [factoriesPrev, setFactoriesPrev] = useState(null);
-
-  // Dummy data for charts (replace with real data/fetch logic)
-  const gradeColors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#a832a6'];
 
   // Handlers for filters
   const handleGradeToggle = (grade) => {
@@ -118,8 +118,6 @@ const CoffeeAnalysisCharts = () => {
           granularity: dateRange.granularity,
           society: selectedSociety || undefined,
           factory: selectedFactory || undefined,
-          page: mainPage,
-          page_size: mainPageSize,
         };
         Object.keys(params).forEach(key => {
           if (!params[key]) delete params[key];
@@ -127,9 +125,6 @@ const CoffeeAnalysisCharts = () => {
         const response = await axiosInstance.get('permits/permits/coffee-analytics/', { params });
         const data = response.data.results ? response.data.results : response.data;
         setLineData(data);
-        setMainTotal(response.data.count || data.length);
-        setMainNext(response.data.next || null);
-        setMainPrev(response.data.previous || null);
       } catch (err) {
         setError('Failed to load analytics data.');
       } finally {
@@ -137,7 +132,7 @@ const CoffeeAnalysisCharts = () => {
       }
     };
     fetchData();
-  }, [dateRange, selectedSociety, selectedFactory, mainPage, mainPageSize]);
+  }, [dateRange, selectedSociety, selectedFactory]);
 
   useEffect(() => {
     // Fetch societies
@@ -160,8 +155,6 @@ const CoffeeAnalysisCharts = () => {
           end_date: dateRange.end,
           society: selectedSociety || undefined,
           factory: selectedFactory || undefined,
-          page: societiesPage,
-          page_size: societiesPageSize,
         };
         Object.keys(params).forEach(key => {
           if (!params[key]) delete params[key];
@@ -169,15 +162,12 @@ const CoffeeAnalysisCharts = () => {
         const moversRes = await axiosInstance.get('permits/permits/top-societies/', { params });
         const moversData = moversRes.data.results ? moversRes.data.results : moversRes.data;
         setTopMovers(moversData);
-        setSocietiesTotal(moversRes.data.count || moversData.length);
-        setSocietiesNext(moversRes.data.next || null);
-        setSocietiesPrev(moversRes.data.previous || null);
       } catch (err) {
         setTopMovers([]);
       }
     };
     fetchTopSocieties();
-  }, [dateRange, selectedSociety, selectedFactory, societiesPage, societiesPageSize]);
+  }, [dateRange, selectedSociety, selectedFactory]);
 
   // Top grades fetch
   useEffect(() => {
@@ -197,9 +187,6 @@ const CoffeeAnalysisCharts = () => {
         const gradesRes = await axiosInstance.get('permits/permits/top-grades/', { params });
         const gradesData = gradesRes.data.results ? gradesRes.data.results : gradesRes.data;
         setTopGrades(gradesData);
-        setGradesTotal(gradesRes.data.count || gradesData.length);
-        setGradesNext(gradesRes.data.next || null);
-        setGradesPrev(gradesRes.data.previous || null);
       } catch (err) {
         setTopGrades([]);
       }
@@ -224,13 +211,9 @@ const CoffeeAnalysisCharts = () => {
         });
         const factoriesRes = await axiosInstance.get('permits/permits/top-factories/', { params });
         const factoriesData = factoriesRes.data.results ? factoriesRes.data.results : factoriesRes.data;
-        // If you want only top 3, use factoriesData.slice(0, 3)
-        setTopFactories(factoriesData);
-        setFactoriesTotal(factoriesRes.data.count || factoriesData.length);
-        setFactoriesNext(factoriesRes.data.next || null);
-        setFactoriesPrev(factoriesRes.data.previous || null);
+        // No need to set topFactories as it's no longer used
       } catch (err) {
-        setTopFactories([]);
+        // No need to set topFactories as it's no longer used
       }
     };
     fetchTopFactories();
@@ -256,7 +239,8 @@ const CoffeeAnalysisCharts = () => {
       return periodArr.map(date => {
         const base = { period: date };
         allGrades.forEach(grade => {
-          base[grade] = dataMap[date]?.[grade] ?? 0;
+          let value = dataMap[date]?.[grade];
+          base[grade] = (value === undefined || value === null || isNaN(Number(value))) ? 0 : Number(value);
         });
         return base;
       });
@@ -266,7 +250,8 @@ const CoffeeAnalysisCharts = () => {
       return periodArr.map(({ key }) => {
         const base = { period: key };
         allGrades.forEach(grade => {
-          base[grade] = dataMap[key]?.[grade] ?? 0;
+          let value = dataMap[key]?.[grade];
+          base[grade] = (value === undefined || value === null || isNaN(Number(value))) ? 0 : Number(value);
         });
         return base;
       });
@@ -285,6 +270,14 @@ const CoffeeAnalysisCharts = () => {
     .filter(g => !excludedGrades.includes(g.grade))
     .sort((a, b) => b.totalKg - a.totalKg)
     .slice(0, 3);
+
+  // Filter out invalid data for charts
+  const validTopMovers = topMovers.filter(
+    item => typeof item.totalKg === 'number' && !isNaN(item.totalKg)
+  );
+  const validFilteredTopGrades = filteredTopGrades.filter(
+    item => typeof item.totalKg === 'number' && !isNaN(item.totalKg)
+  );
 
   // Export functionality
   const prepareExportData = () => {
@@ -320,113 +313,8 @@ const CoffeeAnalysisCharts = () => {
     setIsExportModalOpen(true);
   };
 
-  // Pagination controls for main analytics
-  const renderMainPagination = () => (
-    <div className="flex items-center gap-2 mt-2">
-      <button
-        className="px-2 py-1 border rounded disabled:opacity-50"
-        onClick={() => setMainPage(p => Math.max(1, p - 1))}
-        disabled={!mainPrev}
-      >Prev</button>
-      <span>Page {mainPage}</span>
-      <button
-        className="px-2 py-1 border rounded disabled:opacity-50"
-        onClick={() => setMainPage(p => p + 1)}
-        disabled={!mainNext}
-      >Next</button>
-      <span className="ml-2">Total: {mainTotal}</span>
-      <select
-        value={mainPageSize}
-        onChange={e => { setMainPageSize(Number(e.target.value)); setMainPage(1); }}
-        className="ml-2 border rounded px-1"
-      >
-        {[25, 50, 100, 250, 500].map(size => (
-          <option key={size} value={size}>{size} / page</option>
-        ))}
-      </select>
-    </div>
-  );
-
-  // Pagination controls for top_societies
-  const renderSocietiesPagination = () => (
-    <div className="flex items-center gap-2 mt-2">
-      <button
-        className="px-2 py-1 border rounded disabled:opacity-50"
-        onClick={() => setSocietiesPage(p => Math.max(1, p - 1))}
-        disabled={!societiesPrev}
-      >Prev</button>
-      <span>Page {societiesPage}</span>
-      <button
-        className="px-2 py-1 border rounded disabled:opacity-50"
-        onClick={() => setSocietiesPage(p => p + 1)}
-        disabled={!societiesNext}
-      >Next</button>
-      <span className="ml-2">Total: {societiesTotal}</span>
-      <select
-        value={societiesPageSize}
-        onChange={e => { setSocietiesPageSize(Number(e.target.value)); setSocietiesPage(1); }}
-        className="ml-2 border rounded px-1"
-      >
-        {[25, 50, 100, 250, 500].map(size => (
-          <option key={size} value={size}>{size} / page</option>
-        ))}
-      </select>
-    </div>
-  );
-
-  // Pagination controls for top_grades
-  const renderGradesPagination = () => (
-    <div className="flex items-center gap-2 mt-2">
-      <button
-        className="px-2 py-1 border rounded disabled:opacity-50"
-        onClick={() => setGradesPage(p => Math.max(1, p - 1))}
-        disabled={!gradesPrev}
-      >Prev</button>
-      <span>Page {gradesPage}</span>
-      <button
-        className="px-2 py-1 border rounded disabled:opacity-50"
-        onClick={() => setGradesPage(p => p + 1)}
-        disabled={!gradesNext}
-      >Next</button>
-      <span className="ml-2">Total: {gradesTotal}</span>
-      <select
-        value={gradesPageSize}
-        onChange={e => { setGradesPageSize(Number(e.target.value)); setGradesPage(1); }}
-        className="ml-2 border rounded px-1"
-      >
-        {[25, 50, 100, 250, 500].map(size => (
-          <option key={size} value={size}>{size} / page</option>
-        ))}
-      </select>
-    </div>
-  );
-
-  // Pagination controls for top_factories
-  const renderFactoriesPagination = () => (
-    <div className="flex items-center gap-2 mt-2">
-      <button
-        className="px-2 py-1 border rounded disabled:opacity-50"
-        onClick={() => setFactoriesPage(p => Math.max(1, p - 1))}
-        disabled={!factoriesPrev}
-      >Prev</button>
-      <span>Page {factoriesPage}</span>
-      <button
-        className="px-2 py-1 border rounded disabled:opacity-50"
-        onClick={() => setFactoriesPage(p => p + 1)}
-        disabled={!factoriesNext}
-      >Next</button>
-      <span className="ml-2">Total: {factoriesTotal}</span>
-      <select
-        value={factoriesPageSize}
-        onChange={e => { setFactoriesPageSize(Number(e.target.value)); setFactoriesPage(1); }}
-        className="ml-2 border rounded px-1"
-      >
-        {[25, 50, 100, 250, 500].map(size => (
-          <option key={size} value={size}>{size} / page</option>
-        ))}
-      </select>
-    </div>
-  );
+  // Add gradeColors for bar colors
+  const gradeColors = ["#8884d8", "#82ca9d", "#ffc658", "#ff7300", "#a832a6"];
 
   return (
     <div className="space-y-6 bg-amber-50 min-h-screen p-6">
@@ -562,14 +450,9 @@ const CoffeeAnalysisCharts = () => {
 
       {/* Main Bar Chart */}
       <div className="mb-8">
-        {loading && <div>Loading...</div>}
-        {error && <div className="text-red-500">{error}</div>}
-        {!loading && !error && filledLineData.length === 0 && (
-          <div className="text-gray-500 text-center py-8">No data available for current filters.</div>
-        )}
-        {!loading && !error && filledLineData.length > 0 && (
+        {loading ? (
           <BarChartWidget
-            data={filledLineData}
+            data={[]}
             xAxisKey="period"
             yAxisKeys={allGrades.filter(grade => !excludedGrades.includes(grade))}
             colors={gradeColors}
@@ -579,51 +462,70 @@ const CoffeeAnalysisCharts = () => {
               isAnimationActive: false,
             }}
             xTickFormatter={period => formatPeriodLabel(period, dateRange.granularity)}
+            yAxisProps={{
+              domain: [0, 100]
+            }}
           />
+        ) : error ? (
+          <div className="text-red-500">{error}</div>
+        ) : (
+          <ChartErrorBoundary>
+            {Array.isArray(filledLineData) && filledLineData.length > 0 &&
+              allGrades.filter(grade => !excludedGrades.includes(grade)).length > 0 &&
+              filledLineData.every(row =>
+                allGrades.filter(grade => !excludedGrades.includes(grade)).every(grade => typeof row[grade] === 'number' && !isNaN(row[grade]))
+              ) ? (
+              <BarChartWidget
+                data={filledLineData}
+                xAxisKey="period"
+                yAxisKeys={allGrades.filter(grade => !excludedGrades.includes(grade))}
+                colors={gradeColors}
+                title="Total Coffee Transported Over Time"
+                height={350}
+                barProps={{
+                  isAnimationActive: false,
+                }}
+                xTickFormatter={period => formatPeriodLabel(period, dateRange.granularity)}
+                yAxisProps={{
+                  domain: [
+                    (dataMin) => Math.floor(isFinite(dataMin) ? dataMin : 0),
+                    (dataMax) => Math.ceil(isFinite(dataMax) ? dataMax : 100)
+                  ]
+                }}
+              />
+            ) : (
+              <div className="text-gray-500 text-center py-8">No valid data available for current filters.</div>
+            )}
+          </ChartErrorBoundary>
         )}
-        {renderMainPagination()}
       </div>
 
-      {/* Top Movers and Top Performers */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Top Movers */}
-        <TopPerformersChart
-          data={topMovers}
-          xAxisKey="totalKg"
-          yAxisKey="society"
-          barColor="#82ca9d"
-          title="Top 3 Coffee Movers (Societies)"
-          xAxisLabel="Total Coffee (kg)"
-          yAxisLabel="Society"
-          domain={moversAxis.domain}
-          tickCount={moversAxis.tickCount}
-          barLabelFormatter={{
-            fill: '#374151',
-            fontWeight: 700,
-            fontSize: 15,
-            formatter: (value) => `${value} kg`
-          }}
-        />
-        {/* Top Performers */}
-        <TopPerformersChart
-          data={filteredTopGrades}
-          xAxisKey="totalKg"
-          yAxisKey="grade"
-          barColor="#8884d8"
-          title="Top 3 Coffee Performers (Grades)"
-          xAxisLabel="Total Coffee (kg)"
-          yAxisLabel="Grade"
-          domain={gradesAxis.domain}
-          tickCount={gradesAxis.tickCount}
-          barLabelFormatter={{
-            fill: '#374151',
-            fontWeight: 700,
-            fontSize: 15,
-            formatter: (value) => `${value} kg`
-          }}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+        {/* Top 3 performing societies */}
+        <div className="bg-white rounded-lg shadow p-4 flex flex-col justify-center">
+          <TopPerformersChart
+            data={validTopMovers}
+            valueKey="totalKg"
+            nameKey="society"
+            barColor="#8884d8"
+            title="Top 3 Performing Societies"
+            xAxisLabel="Total Weight (KGs)"
+            yAxisLabel="Society"
+          />
+        </div>
+        {/* Top 3 performing coffee grades */}
+        <div className="bg-white rounded-lg shadow p-4 flex flex-col justify-center">
+          <TopPerformersChart
+            data={validFilteredTopGrades}
+            valueKey="totalKg"
+            nameKey="grade"
+            barColor="#82ca9d"
+            title="Top 3 Performing Coffee Grades"
+            xAxisLabel="Total Weight (KGs)"
+            yAxisLabel="Grade"
+          />
+        </div>
       </div>
-      {renderSocietiesPagination()}
 
       <PermitAnalyticsCharts
         selectedSociety={selectedSociety}

@@ -12,6 +12,13 @@ const statusLabels = {
   cumulative_rejected: 'Rejected',
 };
 
+const Spinner = () => (
+  <div className="flex justify-center items-center py-8">
+    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-amber-600"></div>
+    <span className="ml-2 text-amber-700">Loading...</span>
+  </div>
+);
+
 const PermitAnalyticsCharts = ({ selectedSociety, selectedFactory, dateRange, xTickFormatter }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,8 +51,8 @@ const PermitAnalyticsCharts = ({ selectedSociety, selectedFactory, dateRange, xT
     <div className="bg-white rounded-lg shadow p-4 mb-8">
       <h3 className="font-semibold mb-2">Cumulative Approved & Rejected Permits Over Time</h3>
       {loading ? (
-        <div>Loading...</div>
-      ) : (
+        <Spinner />
+      ) : Array.isArray(data) && data.length > 0 ? (
         <ResponsiveContainer width="100%" height={350}>
           <AreaChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -87,6 +94,8 @@ const PermitAnalyticsCharts = ({ selectedSociety, selectedFactory, dateRange, xT
             ))}
           </AreaChart>
         </ResponsiveContainer>
+      ) : (
+        <div className="text-gray-500 text-center py-8">No data available for current filters.</div>
       )}
     </div>
   );
