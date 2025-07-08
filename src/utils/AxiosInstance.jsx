@@ -18,8 +18,8 @@ export const fetchCsrfToken = async () => {
 };
 
 const axiosInstance = axios.create({
-  // baseURL: "https://cmp-server-kaelstormproxy9126-0gw8s8yb.leapcell.dev/api",
-  baseURL: "http://localhost:8000/api",
+  baseURL: "https://cmp-server-kaelstormproxy9126-0gw8s8yb.leapcell.dev/api",
+  // baseURL: "http://localhost:8000/api",
   withCredentials: true, 
   headers: {
     "Content-Type": "application/json",
