@@ -10,10 +10,12 @@ const PAGE_SIZE = 10;
 const statusColors = {
   approved: "bg-green-100 text-green-800",
   rejected: "bg-red-100 text-red-800",
+  canceled: "bg-gray-200 text-gray-700",
   pending: "bg-yellow-100 text-yellow-800",
 };
 
 function getSocietyStatus(society) {
+  if (society.canceled) return "canceled";
   if (society.is_approved) return "approved";
   if (society.rejection_reason) return "rejected";
   return "pending";
@@ -97,6 +99,8 @@ const SocietyMgmt = () => {
       matchesStatus = !society.is_approved && !society.rejection_reason;
     } else if (statusFilter === "rejected") {
       matchesStatus = !society.is_approved && !!society.rejection_reason;
+    } else if (statusFilter === "canceled") {
+      matchesStatus = society.canceled;
     }
 
     const matchesCounty = countyFilter ? society.county === countyFilter : true;
@@ -203,6 +207,7 @@ const SocietyMgmt = () => {
             <option value="approved">Approved</option>
             <option value="pending">Pending/Inactive</option>
             <option value="rejected">Rejected</option>
+            <option value="canceled">Canceled</option>
           </select>
         </div>
         <div>

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axiosInstance, { setupTokenRefresh, fetchCsrfToken } from '../utils/AxiosInstance';
 import { useToast } from '../context/ToastContext';
+import { useLocation } from 'react-router-dom';
 
 const AuthContext = createContext(null);
 
@@ -9,14 +10,22 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const { showToast } = useToast();
+  const location = useLocation();
 
-  // Check authentication status on mount
+  // Helper to check if current path is a public page
+  const isPublicPage = (
+    /^\/cancel-application\//.test(location.pathname) ||
+    ['/login', '/register', '/activation', '/forgot-password'].includes(location.pathname) ||
+    /^\/reset-password\//.test(location.pathname)
+  );
+
+  // Check authentication status on mount or location change
   useEffect(() => {
     // Always fetch CSRF token on mount
     fetchCsrfToken().finally(() => {
       const checkAuth = async () => {
-        // Skip auth check if we're on the login or register page
-        if (['/login', '/register'].includes(window.location.pathname)) {
+        // Skip auth check if we're on a public page
+        if (isPublicPage) {
           setLoading(false);
           return;
         }
@@ -39,7 +48,7 @@ export const AuthProvider = ({ children }) => {
       };
       checkAuth();
     });
-  }, []);
+  }, [location]);
 
   useEffect(() => {
     let cleanup;

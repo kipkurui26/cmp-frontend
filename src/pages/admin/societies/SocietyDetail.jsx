@@ -10,6 +10,7 @@ const statusColors = {
 };
 
 const getSocietyStatus = (society) => {
+  if (society.canceled) return { label: "Canceled", color: "bg-gray-200 text-gray-700" };
   if (society.is_approved) return { label: "Approved", color: "bg-green-100 text-green-800" };
   if (society.rejection_reason) return { label: "Rejected", color: "bg-red-100 text-red-800" };
   return { label: "Pending", color: "bg-yellow-100 text-yellow-800" };

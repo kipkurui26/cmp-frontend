@@ -11,6 +11,9 @@ import { NotificationProvider } from "./context/NotificationContext";
 import { ROLES } from "./utils/roles";
 import ErrorBoundary from "./components/ErrorBoundary";
 import NotFound from "./pages/NotFound";
+import CancelApplication from "./pages/auth/CancelApplicatin";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
 
 // Import admin-specific components
 import AdminDashboard from "./pages/admin/AdminDash";
@@ -55,6 +58,9 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/logout" element={<Logout />} />
               <Route path="/activation" element={<Activation />} />
+              <Route path="/cancel-application/:token" element={<CancelApplication />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password/:uid/:token" element={<ResetPassword />} />
 
               {/* Protected Routes */}
               <Route
