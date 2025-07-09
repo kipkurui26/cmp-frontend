@@ -80,24 +80,25 @@ const WarehouseList = () => {
   );
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 p-4 sm:p-6 px-2 sm:px-4 md:px-0">
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Mill Warehouse Management
-          </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            View, add, edit, and manage all coffee mill warehouses in the
-            system.
-          </p>
+        <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Mill Warehouse Management
+            </h1>
+            <p className="mt-1 text-sm text-gray-500">
+              View, add, edit, and manage all coffee mill warehouses in the system.
+            </p>
+          </div>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium bg-teal-600 text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 w-full sm:w-auto justify-center"
+          >
+            <PlusIcon className="h-5 w-5 mr-2" />
+            Add Warehouse
+          </button>
         </div>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium bg-teal-600 text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
-        >
-          <PlusIcon className="h-5 w-5 mr-2" />
-          Add Warehouse
-        </button>
       </div>
 
       {error && (
@@ -191,7 +192,7 @@ const WarehouseList = () => {
 
       {isModalOpen && (
         <div
-          className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center"
+          className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center px-2"
           style={{
             backgroundImage: `url(${coffeeBG})`,
             backgroundSize: "cover",
@@ -200,7 +201,7 @@ const WarehouseList = () => {
             WebkitBackdropFilter: "blur(8px)",
           }}
         >
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+          <div className="bg-white rounded-lg p-4 sm:p-6 max-w-xs sm:max-w-md w-full">
             <h2 className="text-lg font-medium mb-4">Add New Warehouse</h2>
             <form onSubmit={handleFormSubmit} className="space-y-4">
               <div>
@@ -281,19 +282,19 @@ const WarehouseList = () => {
                   Active
                 </label>
               </div>
-              <div className="flex justify-end space-x-3 mt-6">
+              <div className="flex flex-col gap-2 sm:flex-row sm:justify-end space-x-0 sm:space-x-3 mt-6">
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 w-full sm:w-auto"
+                >
+                  Save
+                </button>
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 w-full sm:w-auto"
                 >
                   Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                >
-                  Save
                 </button>
               </div>
             </form>

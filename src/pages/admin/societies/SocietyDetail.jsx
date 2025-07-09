@@ -83,9 +83,9 @@ const SocietyDetail = () => {
   const status = getSocietyStatus(society);
 
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-lg shadow p-8 mt-8 space-y-8">
+    <div className="max-w-4xl mx-auto bg-white rounded-lg shadow p-4 sm:p-8 mt-8 space-y-8 px-2 sm:px-4 md:px-0">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div className="flex items-center gap-2">
           <button
             onClick={() => navigate(-1)}
@@ -100,16 +100,16 @@ const SocietyDetail = () => {
           </span>
         </div>
         {!society.is_approved && !society.rejection_reason && (
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row sm:gap-2 w-full sm:w-auto">
             <button
               onClick={() => setActionModal({ show: true, action: 'approve' })}
-              className="px-4 py-2 rounded bg-green-600 text-white font-semibold hover:bg-green-700"
+              className="px-4 py-2 rounded bg-green-600 text-white font-semibold hover:bg-green-700 w-full sm:w-auto"
             >
               Approve
             </button>
             <button
               onClick={() => setActionModal({ show: true, action: 'reject' })}
-              className="px-4 py-2 rounded bg-red-600 text-white font-semibold hover:bg-red-700"
+              className="px-4 py-2 rounded bg-red-600 text-white font-semibold hover:bg-red-700 w-full sm:w-auto"
             >
               Reject
             </button>
@@ -175,8 +175,8 @@ const SocietyDetail = () => {
 
       {/* Unified Approve/Reject Modal */}
       {actionModal.show && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-          <div className="bg-white rounded shadow-lg p-6 max-w-sm w-full">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-2">
+          <div className="bg-white rounded shadow-lg p-4 sm:p-6 w-full max-w-xs sm:max-w-sm">
             <h2 className="text-lg font-semibold mb-4">
               {actionModal.action === 'approve' ? 'Confirm Approval' : 'Confirm Rejection'}
             </h2>

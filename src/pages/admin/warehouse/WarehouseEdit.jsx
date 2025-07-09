@@ -84,7 +84,7 @@ const WarehouseEdit = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-2 sm:px-4 md:px-0">
       {/* Success Message */}
       {successMessage && (
         <div className="rounded-md bg-green-50 p-4">
@@ -113,10 +113,10 @@ const WarehouseEdit = () => {
         </div>
       )}
 
-      <div className="flex items-center space-x-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:space-x-4">
         <button
           onClick={() => navigate(`/admin/warehouses/${warehouseId}`)}
-          className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+          className="w-max inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
         >
           <ArrowLeftIcon className="h-5 w-5 mr-2" />
           Back
@@ -124,7 +124,7 @@ const WarehouseEdit = () => {
         <h1 className="text-2xl font-bold text-gray-900">Edit Warehouse</h1>
       </div>
 
-      <div className="bg-white shadow rounded-lg p-6 max-w-xl mx-auto">
+      <div className="bg-white shadow rounded-lg p-4 sm:p-6 max-w-xl mx-auto">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700">Name</label>
@@ -184,10 +184,10 @@ const WarehouseEdit = () => {
             />
             <label className="ml-2 block text-sm text-gray-900">Active</label>
           </div>
-          <div className="flex justify-end">
+          <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
             <button
               type="submit"
-              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-amber-700 hover:bg-amber-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600"
+              className="inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-amber-700 hover:bg-amber-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600 w-full sm:w-auto"
               disabled={saving}
             >
               {saving ? "Saving..." : "Save Changes"}

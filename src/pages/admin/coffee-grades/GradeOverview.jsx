@@ -61,27 +61,29 @@ const GradeOverview = () => {
   );
 
   return (
-    <div className="space-y-6 bg-amber-50 min-h-screen p-6">
+    <div className="space-y-6 bg-amber-50 min-h-screen p-4 sm:p-6 px-2 sm:px-4 md:px-0">
       <div className="flex justify-between items-center mb-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">
-            Coffee Grades
-          </h1>
-          <p className="text-gray-600 text-sm">
-            View, filter, and manage all registered coffee grades.
-          </p>
+        <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-1">
+              Coffee Grades
+            </h1>
+            <p className="text-gray-600 text-sm">
+              View, filter, and manage all registered coffee grades.
+            </p>
+          </div>
+          <Link
+            to="/admin/coffee-grades/register"
+            className="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium bg-teal-600 text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 w-full sm:w-auto justify-center"
+          >
+            <PlusIcon className="h-5 w-5 mr-2" />
+            Add Grade
+          </Link>
         </div>
-        <Link
-          to="/admin/coffee-grades/register"
-          className="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium bg-teal-600 text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
-        >
-          <PlusIcon className="h-5 w-5 mr-2" />
-          Add Grade
-        </Link>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg p-4 mb-4 flex flex-col md:flex-row md:items-end gap-4 shadow">
+      <div className="bg-white rounded-lg p-4 mb-4 flex flex-col md:flex-row md:items-end gap-4 shadow overflow-x-auto">
         <div className="flex-1">
           <label className="block text-xs font-medium text-gray-700 mb-1">
             Search by Grade
@@ -171,10 +173,14 @@ const GradeOverview = () => {
                     {grade.weight_per_bag}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {grade.created_at ? new Date(grade.created_at).toLocaleString() : "-"}
+                    {grade.created_at
+                      ? new Date(grade.created_at).toLocaleString()
+                      : "-"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {grade.updated_at ? new Date(grade.updated_at).toLocaleString() : "-"}
+                    {grade.updated_at
+                      ? new Date(grade.updated_at).toLocaleString()
+                      : "-"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <Link

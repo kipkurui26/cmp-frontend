@@ -71,8 +71,9 @@ const DashboardOverview = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-2 sm:px-4 md:px-0">
       <h1 className="text-2xl font-semibold text-gray-900">Dashboard Overview</h1>
+      <p className="text-gray-600 text-sm md:text-base max-w-2xl">Welcome to your staff dashboard. Monitor permit metrics and manage pending approvals efficiently.</p>
       
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -44,16 +44,18 @@ const GradeRegister = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-2 sm:px-4 md:px-0">
       <div className="flex items-center space-x-4">
-        <button
-          onClick={() => navigate('/admin/coffee-grades')}
-          className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-        >
-          <ArrowLeftIcon className="h-5 w-5 mr-2" />
-          Back
-        </button>
-        <h1 className="text-2xl font-bold text-gray-900">Register New Grade</h1>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:space-x-4">
+          <button
+            onClick={() => navigate('/admin/coffee-grades')}
+            className="w-max inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            <ArrowLeftIcon className="h-5 w-5 mr-2" />
+            Back
+          </button>
+          <h1 className="text-2xl font-bold text-gray-900">Register New Grade</h1>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
@@ -109,7 +111,7 @@ const GradeRegister = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-amber-700 hover:bg-amber-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-amber-700 hover:bg-amber-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
           >
             {isSubmitting ? 'Creating...' : 'Create Grade'}
           </button>

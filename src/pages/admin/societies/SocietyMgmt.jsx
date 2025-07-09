@@ -155,26 +155,28 @@ const SocietyMgmt = () => {
     }
   };
 
-  const allSelectedArePending = selectedSocieties.length > 0 &&
-    selectedSocieties.every(id => {
-      const s = paginatedSocieties.find(soc => soc.id === id);
+  const allSelectedArePending =
+    selectedSocieties.length > 0 &&
+    selectedSocieties.every((id) => {
+      const s = paginatedSocieties.find((soc) => soc.id === id);
       return s && !s.is_approved && !s.rejection_reason;
     });
 
   return (
-    <div className="space-y-6 bg-amber-50 min-h-screen p-6">
-      <div className="flex justify-between items-center mb-4">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">
-          Society Management
-        </h1>
+    <div className="space-y-6 bg-amber-50 min-h-screen p-4 sm:p-6 px-2 sm:px-4 md:px-0">
+      <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center mb-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">
+            Society Management
+          </h1>
           <p className="text-gray-600 text-sm">
-            View, filter, and manage all registered societies. Use the filters below to narrow down your search.
-        </p>
+            View, filter, and manage all registered societies. Use the filters
+            below to narrow down your search.
+          </p>
         </div>
         <Link
           to="/admin/societies/register"
-          className="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium bg-teal-600 text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+          className="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium bg-teal-600 text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 w-full sm:w-auto justify-center"
         >
           <PlusIcon className="h-5 w-5 mr-2" />
           Add Society
@@ -182,7 +184,7 @@ const SocietyMgmt = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg p-4 mb-4 flex flex-col md:flex-row md:items-end gap-4 shadow">
+      <div className="bg-white rounded-lg p-4 mb-4 flex flex-col md:flex-row md:items-end gap-4 shadow overflow-x-auto">
         <div className="flex-1">
           <label className="block text-xs font-medium text-gray-700 mb-1">
             Search
@@ -261,16 +263,16 @@ const SocietyMgmt = () => {
       </div>
 
       {/* Bulk Actions */}
-      <div className="flex gap-2 mb-2">
+      <div className="flex flex-col gap-2 sm:flex-row sm:gap-2 mb-2 w-full">
         <button
-          className="px-4 py-2 rounded bg-green-600 text-white font-semibold hover:bg-green-700 disabled:opacity-50"
+          className="px-4 py-2 rounded bg-green-600 text-white font-semibold hover:bg-green-700 disabled:opacity-50 w-full sm:w-auto"
           disabled={selectedSocieties.length === 0 || !allSelectedArePending}
           onClick={() => setBulkActionModal({ show: true, action: "approve" })}
         >
           Bulk Approve ({selectedSocieties.length})
         </button>
         <button
-          className="px-4 py-2 rounded bg-red-600 text-white font-semibold hover:bg-red-700 disabled:opacity-50"
+          className="px-4 py-2 rounded bg-red-600 text-white font-semibold hover:bg-red-700 disabled:opacity-50 w-full sm:w-auto"
           disabled={selectedSocieties.length === 0 || !allSelectedArePending}
           onClick={() => setBulkActionModal({ show: true, action: "reject" })}
         >
@@ -358,7 +360,8 @@ const SocietyMgmt = () => {
                         statusColors[getSocietyStatus(society)]
                       }`}
                     >
-                      {getSocietyStatus(society).charAt(0).toUpperCase() + getSocietyStatus(society).slice(1)}
+                      {getSocietyStatus(society).charAt(0).toUpperCase() +
+                        getSocietyStatus(society).slice(1)}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -409,13 +412,15 @@ const SocietyMgmt = () => {
       />
 
       {bulkActionModal.show && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-          <div className="bg-white rounded shadow-lg p-6 max-w-sm w-full">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-2">
+          <div className="bg-white rounded shadow-lg p-4 sm:p-6 w-full max-w-xs sm:max-w-sm">
             <h2 className="text-lg font-semibold mb-4 capitalize">
               Confirm {bulkActionModal.action}
             </h2>
             <p className="mb-6">
-              Are you sure you want to <span className="font-bold">{bulkActionModal.action}</span> the selected societies?
+              Are you sure you want to{" "}
+              <span className="font-bold">{bulkActionModal.action}</span> the
+              selected societies?
             </p>
             {bulkActionModal.action === "reject" && (
               <div className="mb-4">
@@ -426,17 +431,21 @@ const SocietyMgmt = () => {
                   className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm resize-none "
                   rows={3}
                   value={rejectionReason}
-                  onChange={e => setRejectionReason(e.target.value)}
+                  onChange={(e) => setRejectionReason(e.target.value)}
                   placeholder="Enter reason for rejection"
                 />
               </div>
             )}
             <div className="flex justify-end space-x-3">
               <button
-                onClick={actionLoading ? undefined : () => {
-                  setBulkActionModal({ show: false, action: null });
-                  setRejectionReason("");
-                }}
+                onClick={
+                  actionLoading
+                    ? undefined
+                    : () => {
+                        setBulkActionModal({ show: false, action: null });
+                        setRejectionReason("");
+                      }
+                }
                 disabled={actionLoading}
                 className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
               >
@@ -447,19 +456,35 @@ const SocietyMgmt = () => {
                   setActionLoading(true);
                   try {
                     setBulkActionModal({ show: false, action: null });
-                    await handleBulkAction(bulkActionModal.action, rejectionReason);
+                    await handleBulkAction(
+                      bulkActionModal.action,
+                      rejectionReason
+                    );
                     setRejectionReason("");
                   } finally {
                     setActionLoading(false);
                   }
                 }}
-                className={`px-4 py-2 text-white rounded ${bulkActionModal.action === "approve" ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"} disabled:opacity-50`}
-                disabled={actionLoading || (bulkActionModal.action === 'reject' && !rejectionReason.trim())}
+                className={`px-4 py-2 text-white rounded ${
+                  bulkActionModal.action === "approve"
+                    ? "bg-green-600 hover:bg-green-700"
+                    : "bg-red-600 hover:bg-red-700"
+                } disabled:opacity-50`}
+                disabled={
+                  actionLoading ||
+                  (bulkActionModal.action === "reject" &&
+                    !rejectionReason.trim())
+                }
               >
                 {actionLoading ? (
-                  <span className="flex items-center"><span className="animate-spin mr-2 h-4 w-4 border-b-2 border-white rounded-full"></span>Processing...</span>
+                  <span className="flex items-center">
+                    <span className="animate-spin mr-2 h-4 w-4 border-b-2 border-white rounded-full"></span>
+                    Processing...
+                  </span>
+                ) : bulkActionModal.action === "approve" ? (
+                  "Approve"
                 ) : (
-                  bulkActionModal.action === "approve" ? "Approve" : "Reject"
+                  "Reject"
                 )}
               </button>
             </div>

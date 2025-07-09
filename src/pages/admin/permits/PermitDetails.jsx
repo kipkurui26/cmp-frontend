@@ -157,8 +157,8 @@ const PermitDetails = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-6 px-2 sm:px-4 md:px-0">
+      <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center">
         <div className="flex items-center space-x-4">
           <button
             onClick={() => navigate('/admin/permits')}
@@ -168,19 +168,19 @@ const PermitDetails = () => {
           </button>
           <h1 className="text-2xl font-semibold text-gray-900">Permit Details</h1>
         </div>
-        <div className="space-x-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:space-x-2 w-full sm:w-auto">
           {permitData.status === 'PENDING' && (
             <>
               <button 
                 onClick={() => setActionModal({ show: true, action: 'approve' })}
-                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700"
+                className="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 w-full sm:w-auto"
               >
                 <CheckCircleIcon className="h-5 w-5 mr-2" />
                 Approve
               </button>
               <button 
                 onClick={() => setActionModal({ show: true, action: 'reject' })}
-                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700"
+                className="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 w-full sm:w-auto"
               >
                 <XCircleIcon className="h-5 w-5 mr-2" />
                 Reject
@@ -190,7 +190,7 @@ const PermitDetails = () => {
           {permitData.status === 'APPROVED' && (
           <button 
             onClick={handleDownload}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+              className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 w-full sm:w-auto"
           >
             <DocumentArrowDownIcon className="h-5 w-5 mr-2" />
             Download Permit
@@ -201,8 +201,8 @@ const PermitDetails = () => {
 
       {/* Reject Modal */}
       {actionModal.show && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-          <div className="bg-white rounded shadow-lg p-6 max-w-sm w-full">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-2">
+          <div className="bg-white rounded shadow-lg p-4 sm:p-6 w-full max-w-xs sm:max-w-sm">
             <h2 className="text-lg font-semibold mb-4">
               {actionModal.action === 'approve' ? 'Confirm Approval' : 'Confirm Rejection'}
             </h2>
@@ -264,8 +264,8 @@ const PermitDetails = () => {
       )}
 
       {/* Tabs */}
-      <div className="border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8">
+      <div className="border-b border-gray-200 overflow-x-auto">
+        <nav className="-mb-px flex space-x-4 sm:space-x-8 min-w-max">
           <button
             onClick={() => setActiveTab('details')}
             className={`${
@@ -303,7 +303,7 @@ const PermitDetails = () => {
       </div>
 
       {/* Tab Content */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white rounded-lg shadow p-4 sm:p-6">
         {renderTabContent()}
       </div>
     </div>

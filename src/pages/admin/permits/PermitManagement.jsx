@@ -189,38 +189,16 @@ const PermitManagement = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-6 px-2 sm:px-4 md:px-0">
+      <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">
-            Permit Management
-          </h1>
-          <p className="text-gray-600 mt-1 text-sm">
-            View, filter, and manage all permit applications across societies, factories, and warehouses.
-          </p>
-        </div>
-        <div className="space-x-2">
-          <button
-            onClick={handleExport}
-            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-teal-50 hover:border-teal-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={selectedPermits.length === 0}
-          >
-            <DocumentArrowDownIcon className="h-5 w-5 mr-2 text-teal-600" />
-            Export {selectedPermits.length > 0 ? `(${selectedPermits.length})` : ''}
-          </button>
-          <button
-            onClick={handleGenerateReport}
-            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-teal-50 hover:border-teal-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={!allSelectedArePending}
-          >
-            <DocumentTextIcon className="h-5 w-5 mr-2 text-teal-600" />
-            Generate Report {selectedPermits.length > 0 ? `(${selectedPermits.length})` : ''}
-          </button>
+          <h1 className="text-2xl font-semibold text-gray-900">Permit Management</h1>
+          <p className="text-gray-600 mt-1 text-sm">View, filter, and manage all permit applications across societies, factories, and warehouses.</p>
         </div>
       </div>
 
       {/* Advanced Filters */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white rounded-lg shadow p-4 sm:p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Status Filter */}
           <div>
@@ -341,7 +319,7 @@ const PermitManagement = () => {
         <div className="mt-4 flex justify-end">
           <button
             onClick={handleClearFilters}
-            className="px-4 py-2 rounded bg-amber-200 text-amber-800 font-semibold hover:bg-amber-300 cursor-pointer"
+            className="px-4 py-2 rounded bg-amber-200 text-amber-800 font-semibold hover:bg-amber-300 cursor-pointer w-full sm:w-auto"
           >
             Clear Filters
           </button>
@@ -353,7 +331,7 @@ const PermitManagement = () => {
 
       {/* Permits Table */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto rounded-md border border-gray-100">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -453,13 +431,13 @@ const PermitManagement = () => {
       </div>
 
       {/* Add Pagination component */}
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        totalResults={totalPermits}
-        pageSize={permitsPerPage}
-        onPageChange={setCurrentPage}
-      />
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalResults={totalPermits}
+          pageSize={permitsPerPage}
+          onPageChange={setCurrentPage}
+        />
     </div>
   );
 };

@@ -147,32 +147,33 @@ const PermitApprovalQueue = () => {
 
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-2 sm:px-4 md:px-0">
       <h1 className="text-2xl font-semibold text-gray-900">Permit Approval Queue</h1>
+      <p className="text-gray-600 text-sm md:text-base max-w-2xl">Review, approve, or reject pending permit applications below. Use the bulk actions to efficiently process multiple requests at once.</p>
 
       {/* Permits List */}
       <div className="bg-white rounded-lg shadow">
         <div className="p-6">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2 sm:gap-0">
             <h2 className="text-lg font-medium text-gray-900">Pending Permits ({totalPermits})</h2>
-            <div className="space-x-2">
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <button
                 onClick={() => openBulkActionModal('approve')}
-                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                 disabled={selectedPermits.length === 0 || actionLoading}
               >
                 {actionLoading && bulkActionModal.action === "approve" ? 'Processing...' : `Bulk Approve (${selectedPermits.length})`}
               </button>
               <button
                 onClick={() => openBulkActionModal('reject')}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                 disabled={selectedPermits.length === 0 || actionLoading}
               >
                 {actionLoading && bulkActionModal.action === "reject" ? 'Processing...' : `Bulk Reject (${selectedPermits.length})`}
               </button>
             </div>
           </div>
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto rounded-md border border-gray-100">
             {pendingPermits.length > 0 ? (
               <table className="max-w-full divide-y divide-gray-200">
                 <thead>
@@ -309,8 +310,8 @@ const PermitApprovalQueue = () => {
 
       {/* Unified Bulk Action Modal */}
       {bulkActionModal.show && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-          <div className="bg-white rounded shadow-lg p-6 max-w-sm w-full">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-2">
+          <div className="bg-white rounded shadow-lg p-4 sm:p-6 w-full max-w-xs sm:max-w-sm">
             <h2 className="text-lg font-semibold mb-4 capitalize">
               Confirm {bulkActionModal.action}
             </h2>

@@ -248,7 +248,7 @@ const FarmerAnalytics = () => {
       <div className="flex flex-col sm:flex-row justify-end gap-2 mb-4">
         {/* Export Button */}
         <button
-          className="flex items-center gap-1 px-4 py-2 rounded border border-gray-300 bg-white text-gray-700 font-medium shadow-sm hover:bg-gray-100 transition w-full sm:w-auto"
+          className="flex items-center justify-center gap-1 px-4 py-2 rounded border border-gray-300 bg-white text-gray-700 font-medium shadow-sm hover:bg-gray-100 transition w-full sm:w-auto"
           onClick={handleExportClick}
         >
           <PiFileCsvBold className="w-5 h-5 text-amber-600" />
@@ -256,7 +256,7 @@ const FarmerAnalytics = () => {
         </button>
         {/* Download Report Button */}
         <button
-          className="flex items-center gap-1 px-4 py-2 rounded border border-gray-300 bg-white text-amber-700 font-medium shadow-sm hover:bg-amber-100 transition w-full sm:w-auto"
+          className="flex items-center justify-center gap-1 px-4 py-2 rounded border border-gray-300 bg-white text-amber-700 font-medium shadow-sm hover:bg-amber-100 transition w-full sm:w-auto"
           onClick={() => setIsDownloadModalOpen(true)}
         >
           <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
