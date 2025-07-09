@@ -49,7 +49,7 @@ const Sidebar = () => {
     { name: "Warehouses", icon: ArchiveBoxIcon, path: "/admin/warehouses" },
     { name: "Coffee Grades", icon: GiCoffeeBeans, path: "/admin/coffee-grades" },
     { name: "Analytics & Reports", icon: ChartBarIcon, path: "/admin/analytics" },
-    { name: "Settings", icon: Cog6ToothIcon, path: "/admin/settings" },
+    // { name: "Settings", icon: Cog6ToothIcon, path: "/admin/settings" },
   ];
 
   const menuItems = isAdmin ? adminMenuItems : farmerMenuItems;
