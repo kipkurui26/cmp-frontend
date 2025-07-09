@@ -82,7 +82,7 @@ const WarehouseList = () => {
   return (
     <div className="space-y-6 p-4 sm:p-6 px-2 sm:px-4 md:px-0">
       <div className="flex justify-between items-center">
-        <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center">
+        <div className="w-full flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center md:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
               Mill Warehouse Management

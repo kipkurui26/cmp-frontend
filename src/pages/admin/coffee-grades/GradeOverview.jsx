@@ -63,7 +63,7 @@ const GradeOverview = () => {
   return (
     <div className="space-y-6 bg-amber-50 min-h-screen p-4 sm:p-6 px-2 sm:px-4 md:px-0">
       <div className="flex justify-between items-center mb-4">
-        <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center">
+        <div className="w-full flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center md:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 mb-1">
               Coffee Grades
@@ -74,7 +74,7 @@ const GradeOverview = () => {
           </div>
           <Link
             to="/admin/coffee-grades/register"
-            className="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium bg-teal-600 text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 w-full sm:w-auto justify-center"
+            className="inline-flex items-center  px-4 py-2 rounded-md text-sm font-medium bg-teal-600 text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 w-full sm:w-auto justify-center"
           >
             <PlusIcon className="h-5 w-5 mr-2" />
             Add Grade
