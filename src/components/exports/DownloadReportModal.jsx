@@ -146,79 +146,91 @@ const DownloadReportModal = ({
       overlayClassName="fixed inset-0 bg-black/60 flex items-center justify-center"
       ariaHideApp={false}
     >
-      <div className="mb-4">
-        <h2 className="text-xl font-bold mb-1">Download Report</h2>
-        <p className="text-gray-600 text-sm mb-2">Customize your export below. Choose file name, format, and which data to include. Preview before downloading.</p>
-      </div>
-      <div className="flex flex-col md:flex-row gap-4 mb-4">
-        <div className="flex-1">
-          <label htmlFor="download-report-filename" className="block text-sm font-medium text-gray-700 mb-1">File Name</label>
-          <input
-            id="download-report-filename"
-            value={fileName}
-            onChange={e => setFileName(e.target.value.replace(/[^a-zA-Z0-9-_ ]/g, ""))}
-            placeholder="File name"
-            className="block w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:border-amber-600 focus:ring-2 focus:ring-amber-200"
-            aria-label="File name"
-          />
-        </div>
-        <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Format</label>
-          <select
-            value={format}
-            onChange={e => setFormat(e.target.value)}
-            className="block w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:border-amber-600 focus:ring-2 focus:ring-amber-200"
-            aria-label="Export format"
+      <div className="max-h-[75vh] overflow-y-auto">
+        <div className="mb-4 flex items-center">
+          <button
+            onClick={onClose}
+            className="mr-2 px-2 py-1 rounded bg-amber-100 text-amber-700 font-semibold hover:bg-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-400"
+            aria-label="Back"
           >
-            <option value="csv">CSV</option>
-            <option value="pdf">PDF</option>
-          </select>
+            <span className="text-lg">&#8592;</span>
+            <span className="sr-only">Back</span>
+          </button>
+          <div>
+            <h2 className="text-xl font-bold mb-1">Download Report</h2>
+            <p className="text-gray-600 text-sm mb-2">Customize your export below. Choose file name, format, and which data to include. Preview before downloading.</p>
+          </div>
         </div>
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Data Sections</label>
-        <div className="flex flex-wrap gap-4">
-          {availableSections.map(cfg => (
-            <label key={cfg.label} className="flex items-center gap-1 text-sm">
-              <input
-                type="checkbox"
-                checked={cfg.alwaysSelected ? true : selectedSections[cfg.label]}
-                disabled={cfg.alwaysSelected}
-                onChange={cfg.alwaysSelected ? undefined : () => setSelectedSections(s => ({ ...s, [cfg.label]: !s[cfg.label] }))}
-                className="accent-amber-600"
-                aria-label={`Include ${cfg.label}`}
-              />
-              <span>{cfg.label}</span>
-            </label>
-          ))}
+        <div className="flex flex-col md:flex-row gap-4 mb-4">
+          <div className="flex-1">
+            <label htmlFor="download-report-filename" className="block text-sm font-medium text-gray-700 mb-1">File Name</label>
+            <input
+              id="download-report-filename"
+              value={fileName}
+              onChange={e => setFileName(e.target.value.replace(/[^a-zA-Z0-9-_ ]/g, ""))}
+              placeholder="File name"
+              className="block w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:border-amber-600 focus:ring-2 focus:ring-amber-200"
+              aria-label="File name"
+            />
+          </div>
+          <div className="flex-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Format</label>
+            <select
+              value={format}
+              onChange={e => setFormat(e.target.value)}
+              className="block w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:border-amber-600 focus:ring-2 focus:ring-amber-200"
+              aria-label="Export format"
+            >
+              <option value="csv">CSV</option>
+              <option value="pdf">PDF</option>
+            </select>
+          </div>
         </div>
-      </div>
-      <div className="overflow-x-auto max-h-64 mb-4 border rounded">
-        {exportData.length > 0 ? (
-          <table className="min-w-full text-xs border">
-            <thead>
-              <tr>
-                {headers.map(h => (
-                  <th key={h.key} className="border px-2 py-1 bg-gray-100">{h.label}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {exportData.slice(0, 10).map((row, i) => (
-                <tr key={i}>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Data Sections</label>
+          <div className="flex flex-wrap gap-4">
+            {availableSections.map(cfg => (
+              <label key={cfg.label} className="flex items-center gap-1 text-sm">
+                <input
+                  type="checkbox"
+                  checked={cfg.alwaysSelected ? true : selectedSections[cfg.label]}
+                  disabled={cfg.alwaysSelected}
+                  onChange={cfg.alwaysSelected ? undefined : () => setSelectedSections(s => ({ ...s, [cfg.label]: !s[cfg.label] }))}
+                  className="accent-amber-600"
+                  aria-label={`Include ${cfg.label}`}
+                />
+                <span>{cfg.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+        <div className="overflow-x-auto max-h-64 mb-4 border rounded">
+          {exportData.length > 0 ? (
+            <table className="min-w-full text-xs border">
+              <thead>
+                <tr>
                   {headers.map(h => (
-                    <td key={h.key} className="border px-2 py-1">{row[h.key]}</td>
+                    <th key={h.key} className="border px-2 py-1 bg-gray-100">{h.label}</th>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <div className="text-gray-500 text-center py-4">No data to preview.</div>
-        )}
-        {exportData.length > 10 && (
-          <div className="text-xs text-gray-500 mt-2 px-2">Showing first 10 rows of {exportData.length} total.</div>
-        )}
+              </thead>
+              <tbody>
+                {exportData.slice(0, 10).map((row, i) => (
+                  <tr key={i}>
+                    {headers.map(h => (
+                      <td key={h.key} className="border px-2 py-1">{row[h.key]}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div className="text-gray-500 text-center py-4">No data to preview.</div>
+          )}
+          {exportData.length > 10 && (
+            <div className="text-xs text-gray-500 mt-2 px-2">Showing first 10 rows of {exportData.length} total.</div>
+          )}
+        </div>
       </div>
       <div className="flex justify-end gap-2">
         <button

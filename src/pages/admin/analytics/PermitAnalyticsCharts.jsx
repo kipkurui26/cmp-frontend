@@ -48,8 +48,8 @@ const PermitAnalyticsCharts = ({ selectedSociety, selectedFactory, dateRange, xT
   }, [selectedSociety, selectedFactory, dateRange]);
 
   return (
-    <div className="bg-white rounded-lg shadow p-4 mb-8">
-      <h3 className="font-semibold mb-2">Cumulative Approved & Rejected Permits Over Time</h3>
+    <div className="bg-white rounded-lg shadow p-2 sm:p-4 mb-8 overflow-x-auto">
+      <h3 className="font-semibold mb-2 text-base sm:text-lg">Cumulative Approved & Rejected Permits Over Time</h3>
       {loading ? (
         <Spinner />
       ) : Array.isArray(data) && data.length > 0 ? (

@@ -28,19 +28,22 @@ const TopPerformersChart = ({
       }))
     : [];
 
+  // Responsive left margin for BarChart
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+  const chartMargin = {
+    top: 5,
+    right: 20,
+    left: isMobile ? 4 : 20,
+    bottom: 40,
+  };
   return (
-    <div style={{ width: "100%", minWidth: 0 }}>
-      {title && <h3 style={{ marginBottom: 8, fontWeight: 'bold', textAlign: 'center' }}>{title}</h3>}
+    <div style={{ width: "100%" }} className="overflow-x-auto p-2 sm:p-4 pl-0 w-full min-w-0">
+      {title && <h3 className="mb-2 font-semibold text-base sm:text-lg text-center">{title}</h3>}
       <ResponsiveContainer width="100%" height={Math.max(60 * processedData.length, 200)}>
         <BarChart
           layout="vertical"
           data={processedData}
-          margin={{
-            top: 5,
-            right: 20,
-            left: 10,
-            bottom: 40,
-          }}
+          margin={chartMargin}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis

@@ -13,8 +13,8 @@ const BarChartWidget = ({
   xTickFormatter,
   ...props
 }) => (
-  <div className="bg-white rounded shadow p-4 mb-4">
-    {title && <h3 className="font-semibold mb-2">{title}</h3>}
+  <div className="bg-white rounded shadow p-2 sm:p-4 pl-0 w-full min-w-0 mb-4 overflow-x-auto">
+    {title && <h3 className="font-semibold mb-2 text-base sm:text-lg">{title}</h3>}
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data} {...props}>
         <CartesianGrid strokeDasharray="3 3" />

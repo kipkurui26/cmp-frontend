@@ -29,35 +29,37 @@ const ExportModal = ({
         <PiFileCsvBold className="w-6 h-6 text-amber-600" />
         <h2 className="text-xl font-bold">{title}</h2>
       </div>
-      <p className="text-gray-600 mb-4">{description}</p>
-      <div className="overflow-x-auto max-h-96 mb-4">
-        <table className="min-w-full text-sm border">
-          <thead>
-            <tr>
-              {headers.map((h) => (
-                <th key={h.key} className="border px-2 py-1 bg-gray-100">
-                  {h.label}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {data.slice(0, maxPreviewRows).map((row, i) => (
-              <tr key={i}>
+      <div className="max-h-[70vh] overflow-y-auto">
+        <p className="text-gray-600 mb-4">{description}</p>
+        <div className="overflow-x-auto max-h-96 mb-4">
+          <table className="min-w-full text-sm border">
+            <thead>
+              <tr>
                 {headers.map((h) => (
-                  <td key={h.key} className="border px-2 py-1">
-                    {row[h.key]}
-                  </td>
+                  <th key={h.key} className="border px-2 py-1 bg-gray-100">
+                    {h.label}
+                  </th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
-        {data.length > maxPreviewRows && (
-          <div className="text-xs text-gray-500 mt-2">
-            Showing first {maxPreviewRows} rows of {data.length} total.
-          </div>
-        )}
+            </thead>
+            <tbody>
+              {data.slice(0, maxPreviewRows).map((row, i) => (
+                <tr key={i}>
+                  {headers.map((h) => (
+                    <td key={h.key} className="border px-2 py-1">
+                      {row[h.key]}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {data.length > maxPreviewRows && (
+            <div className="text-xs text-gray-500 mt-2">
+              Showing first {maxPreviewRows} rows of {data.length} total.
+            </div>
+          )}
+        </div>
       </div>
       <div className="flex justify-end gap-2">
         <button

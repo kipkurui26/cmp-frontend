@@ -6,6 +6,7 @@ import axiosInstance from '../../../utils/AxiosInstance';
 import { useAuth } from '../../../context/AuthContext';
 import { useToast } from '../../../context/ToastContext';
 import NotificationPreference from '../../../components/common/NotificationPreference';
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const sanitize = (data) => {
   // Remove empty strings, trim whitespace
@@ -46,6 +47,9 @@ const SocietyProfile = () => {
 
   const passwordForm = useForm();
   const { register: pwRegister, handleSubmit: handlePwSubmit, reset: resetPw, formState: { errors: pwErrors, isSubmitting: pwLoading } } = passwordForm;
+  const [showCurrentPw, setShowCurrentPw] = useState(false);
+  const [showNewPw, setShowNewPw] = useState(false);
+  const [showConfirmPw, setShowConfirmPw] = useState(false);
 
   // Fetch society info if not in user
   useEffect(() => {
@@ -319,32 +323,65 @@ const SocietyProfile = () => {
             <form onSubmit={handlePwSubmit(onPasswordChange)}>
               <div className="mb-4">
                 <label className={labelClass}>Current Password</label>
-                <input
-                  type="password"
-                  {...pwRegister('old_password', { required: 'Current password is required' })}
-                  className={inputClass}
-                  placeholder="Current Password"
-                />
+                <div className="relative">
+                  <input
+                    type={showCurrentPw ? "text" : "password"}
+                    {...pwRegister('old_password', { required: 'Current password is required' })}
+                    className={inputClass + ' pr-10'}
+                    placeholder="Current Password"
+                  />
+                  <button
+                    type="button"
+                    tabIndex={-1}
+                    className="absolute inset-y-0 right-0 flex items-center px-2 text-gray-500 focus:outline-none"
+                    onClick={() => setShowCurrentPw((prev) => !prev)}
+                    aria-label={showCurrentPw ? "Hide password" : "Show password"}
+                  >
+                    {showCurrentPw ? <FiEye className="w-5 h-5" /> : <FiEyeOff className="w-5 h-5" />}
+                  </button>
+                </div>
                 {pwErrors.old_password && <div className={errorClass}>{pwErrors.old_password.message}</div>}
               </div>
               <div className="mb-4">
                 <label className={labelClass}>New Password</label>
-                <input
-                  type="password"
-                  {...pwRegister('new_password1', { required: 'New password is required', minLength: { value: 8, message: 'Password must be at least 8 characters' } })}
-                  className={inputClass}
-                  placeholder="New Password"
-                />
+                <div className="relative">
+                  <input
+                    type={showNewPw ? "text" : "password"}
+                    {...pwRegister('new_password1', { required: 'New password is required', minLength: { value: 8, message: 'Password must be at least 8 characters' } })}
+                    className={inputClass + ' pr-10'}
+                    placeholder="New Password"
+                  />
+                  <button
+                    type="button"
+                    tabIndex={-1}
+                    className="absolute inset-y-0 right-0 flex items-center px-2 text-gray-500 focus:outline-none"
+                    onClick={() => setShowNewPw((prev) => !prev)}
+                    aria-label={showNewPw ? "Hide password" : "Show password"}
+                  >
+                    {showNewPw ? <FiEye className="w-5 h-5" /> : <FiEyeOff className="w-5 h-5" />}
+                  </button>
+                </div>
                 {pwErrors.new_password1 && <div className={errorClass}>{pwErrors.new_password1.message}</div>}
               </div>
               <div className="mb-4">
                 <label className={labelClass}>Confirm New Password</label>
-                <input
-                  type="password"
-                  {...pwRegister('new_password2', { required: 'Please confirm your new password', validate: (val) => val === passwordForm.watch('new_password1') || 'Passwords do not match' })}
-                  className={inputClass}
-                  placeholder="Confirm New Password"
-                />
+                <div className="relative">
+                  <input
+                    type={showConfirmPw ? "text" : "password"}
+                    {...pwRegister('new_password2', { required: 'Please confirm your new password', validate: (val) => val === passwordForm.watch('new_password1') || 'Passwords do not match' })}
+                    className={inputClass + ' pr-10'}
+                    placeholder="Confirm New Password"
+                  />
+                  <button
+                    type="button"
+                    tabIndex={-1}
+                    className="absolute inset-y-0 right-0 flex items-center px-2 text-gray-500 focus:outline-none"
+                    onClick={() => setShowConfirmPw((prev) => !prev)}
+                    aria-label={showConfirmPw ? "Hide password" : "Show password"}
+                  >
+                    {showConfirmPw ? <FiEye className="w-5 h-5" /> : <FiEyeOff className="w-5 h-5" />}
+                  </button>
+                </div>
                 {pwErrors.new_password2 && <div className={errorClass}>{pwErrors.new_password2.message}</div>}
               </div>
               <button

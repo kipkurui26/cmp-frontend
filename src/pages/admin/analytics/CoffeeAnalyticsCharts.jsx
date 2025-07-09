@@ -317,21 +317,21 @@ const CoffeeAnalysisCharts = () => {
   const gradeColors = ["#8884d8", "#82ca9d", "#ffc658", "#ff7300", "#a832a6"];
 
   return (
-    <div className="space-y-6 bg-amber-50 min-h-screen p-6">
+    <div className="space-y-6 bg-amber-50 min-h-screen p-2 sm:p-4 md:p-6">
       {/* Section Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">
           Coffee Movement Analytics
         </h1>
-        <p className="text-gray-600 text-sm">
+        <p className="text-gray-600 text-sm sm:text-base">
           Analyze total coffee transported by grade, society, warehouse, and more. Use the filters below to customize your view.
         </p>
       </div>
 
-      <div className="flex justify-end gap-2 mb-4">
+      <div className="flex flex-col sm:flex-row justify-end gap-2 mb-4">
         {/* Export Button */}
         <button
-          className="flex items-center gap-1 px-4 py-2 rounded border border-gray-300 bg-white text-gray-700 font-medium shadow-sm hover:bg-gray-100 transition"
+          className="flex items-center gap-1 px-4 py-2 rounded border border-gray-300 bg-white text-gray-700 font-medium shadow-sm hover:bg-gray-100 transition w-full sm:w-auto"
           onClick={handleExportClick}
         >
           <PiFileCsvBold className="w-5 h-5 text-amber-600" />
@@ -339,7 +339,7 @@ const CoffeeAnalysisCharts = () => {
         </button>
         {/* Download Report Button */}
         <button
-          className="flex items-center gap-1 px-4 py-2 rounded border border-gray-300 bg-white text-amber-700 font-medium shadow-sm hover:bg-amber-100 transition"
+          className="flex items-center gap-1 px-4 py-2 rounded border border-gray-300 bg-white text-amber-700 font-medium shadow-sm hover:bg-amber-100 transition w-full sm:w-auto"
           onClick={() => setIsDownloadModalOpen(true)}
         >
           <FiDownload className="w-4 h-4 text-amber-600" />
@@ -348,7 +348,7 @@ const CoffeeAnalysisCharts = () => {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white rounded-lg p-6 mb-4 shadow-sm">
+      <div className="bg-white rounded-lg p-4 sm:p-6 mb-4 shadow-sm overflow-x-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           {/* Society */}
           <div>
@@ -449,7 +449,7 @@ const CoffeeAnalysisCharts = () => {
       </div>
 
       {/* Main Bar Chart */}
-      <div className="mb-8">
+      <div className="mb-8 overflow-x-auto">
         {loading ? (
           <BarChartWidget
             data={[]}

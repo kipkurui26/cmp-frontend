@@ -5,12 +5,15 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/AxiosInstance';
 import { GiCoffeeBeans } from 'react-icons/gi';
 import coffeeImage from '../../assets/coffee.jpg';
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const ResetPassword = () => {
   const { uid, token } = useParams();
   const { register, handleSubmit, formState: { errors }, watch } = useForm();
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
@@ -55,29 +58,51 @@ const ResetPassword = () => {
             <form className="mt-6 space-y-4 sm:space-y-6" onSubmit={handleSubmit(onSubmit)}>
               <div>
                 <label htmlFor="new_password1" className="sr-only">New Password</label>
-                <input
-                  id="new_password1"
-                  type="password"
-                  {...register('new_password1', { required: 'New password is required' })}
-                  className={`appearance-none relative block w-full px-3 py-2 border border-amber-300 placeholder-gray-800 text-black rounded-md focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm ${errors.new_password1 ? 'border-red-500' : ''}`}
-                  placeholder="New Password"
-                  disabled={loading}
-                />
+                <div className="relative">
+                  <input
+                    id="new_password1"
+                    type={showPassword ? "text" : "password"}
+                    {...register('new_password1', { required: 'New password is required' })}
+                    className={`appearance-none relative block w-full px-3 py-2 border border-amber-300 placeholder-gray-800 text-black rounded-md focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm pr-10 ${errors.new_password1 ? 'border-red-500' : ''}`}
+                    placeholder="New Password"
+                    disabled={loading}
+                  />
+                  <button
+                    type="button"
+                    tabIndex={-1}
+                    className="absolute inset-y-0 right-0 flex items-center px-2 text-gray-500 focus:outline-none"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <FiEye className="w-5 h-5" /> : <FiEyeOff className="w-5 h-5" />}
+                  </button>
+                </div>
                 {errors.new_password1 && <p className="mt-1 text-sm text-red-600">{errors.new_password1.message}</p>}
               </div>
               <div>
                 <label htmlFor="new_password2" className="sr-only">Confirm New Password</label>
-                <input
-                  id="new_password2"
-                  type="password"
-                  {...register('new_password2', {
-                    required: 'Please confirm your new password',
-                    validate: value => value === watch('new_password1') || 'Passwords do not match',
-                  })}
-                  className={`appearance-none relative block w-full px-3 py-2 border border-amber-300 placeholder-gray-800 text-black rounded-md focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm ${errors.new_password2 ? 'border-red-500' : ''}`}
-                  placeholder="Confirm New Password"
-                  disabled={loading}
-                />
+                <div className="relative">
+                  <input
+                    id="new_password2"
+                    type={showConfirmPassword ? "text" : "password"}
+                    {...register('new_password2', {
+                      required: 'Please confirm your new password',
+                      validate: value => value === watch('new_password1') || 'Passwords do not match',
+                    })}
+                    className={`appearance-none relative block w-full px-3 py-2 border border-amber-300 placeholder-gray-800 text-black rounded-md focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm pr-10 ${errors.new_password2 ? 'border-red-500' : ''}`}
+                    placeholder="Confirm New Password"
+                    disabled={loading}
+                  />
+                  <button
+                    type="button"
+                    tabIndex={-1}
+                    className="absolute inset-y-0 right-0 flex items-center px-2 text-gray-500 focus:outline-none"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                  >
+                    {showConfirmPassword ? <FiEye className="w-5 h-5" /> : <FiEyeOff className="w-5 h-5" />}
+                  </button>
+                </div>
                 {errors.new_password2 && <p className="mt-1 text-sm text-red-600">{errors.new_password2.message}</p>}
               </div>
               <button

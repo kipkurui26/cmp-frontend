@@ -10,8 +10,8 @@ const Spinner = () => (
 
 const AdminAnalytics = () => {
   return (
-    <div>
-      <CoffeeAnalysisCharts/>
+    <div className="min-h-screen bg-amber-50 p-2 sm:p-4 md:p-6">
+      <CoffeeAnalysisCharts />
     </div>
   )
 }

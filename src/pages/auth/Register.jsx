@@ -5,11 +5,14 @@ import { GiCoffeeBeans } from 'react-icons/gi';
 import axiosInstance, { fetchCsrfToken } from '../../utils/AxiosInstance'
 import { useToast } from "../../context/ToastContext";
 import coffeeImage from '../../assets/coffee.jpg';
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const Register = () => {
   const { register, handleSubmit, watch, formState: { errors }, trigger, setValue, getValues, clearErrors } = useForm();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({});
   const navigate = useNavigate();
@@ -164,35 +167,57 @@ const Register = () => {
               </div>
               <div>
                 <label htmlFor="password" className="sr-only">Password</label>
-                <input
-                  id="password"
-                  type="password"
-                  {...register('password', {
-                    required: 'Password is required',
-                    minLength: {
-                      value: 8,
-                      message: 'Password must be at least 8 characters'
-                    }
-                  })}
-                  className="appearance-none relative block w-full px-3 py-2 border border-amber-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
-                  placeholder="Password"
-                />
+                <div className="relative">
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    {...register('password', {
+                      required: 'Password is required',
+                      minLength: {
+                        value: 8,
+                        message: 'Password must be at least 8 characters'
+                      }
+                    })}
+                    className="appearance-none relative block w-full px-3 py-2 border border-amber-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm pr-10"
+                    placeholder="Password"
+                  />
+                  <button
+                    type="button"
+                    tabIndex={-1}
+                    className="absolute inset-y-0 right-0 flex items-center px-2 text-gray-500 focus:outline-none"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <FiEye className="w-5 h-5" /> : <FiEyeOff className="w-5 h-5" />}
+                  </button>
+                </div>
                 {errors.password && (
                   <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
                 )}
               </div>
               <div>
                 <label htmlFor="confirmPassword" className="sr-only">Confirm Password</label>
-                <input
-                  id="confirmPassword"
-                  type="password"
-                  {...register('confirmPassword', {
-                    required: 'Please confirm your password',
-                    validate: value => value === watch('password') || 'Passwords do not match'
-                  })}
-                  className="appearance-none relative block w-full px-3 py-2 border border-amber-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
-                  placeholder="Confirm Password"
-                />
+                <div className="relative">
+                  <input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    {...register('confirmPassword', {
+                      required: 'Please confirm your password',
+                      validate: value => value === watch('password') || 'Passwords do not match'
+                    })}
+                    className="appearance-none relative block w-full px-3 py-2 border border-amber-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm pr-10"
+                    placeholder="Confirm Password"
+                  />
+                  <button
+                    type="button"
+                    tabIndex={-1}
+                    className="absolute inset-y-0 right-0 flex items-center px-2 text-gray-500 focus:outline-none"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                  >
+                    {showConfirmPassword ? <FiEye className="w-5 h-5" /> : <FiEyeOff className="w-5 h-5" />}
+                  </button>
+                </div>
                 {errors.confirmPassword && (
                   <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>
                 )}

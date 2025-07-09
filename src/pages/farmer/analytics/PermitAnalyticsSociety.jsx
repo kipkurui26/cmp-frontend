@@ -99,12 +99,12 @@ const PermitAnalyticsFarmer = ({ societyId }) => {
   // ... (UI code for filters, charts, etc. similar to admin, but with societyId fixed)
 
   return (
-    <div className="space-y-6 bg-amber-50 min-h-screen p-6">
-      <h1 className="text-2xl font-bold mb-2">Society Coffee Analytics</h1>
+    <div className="space-y-6 bg-amber-50 min-h-screen p-2 sm:p-4 md:p-6">
+      <h1 className="text-xl sm:text-2xl font-bold mb-2">Society Coffee Analytics</h1>
       {/* Factory Filter */}
-      <div>
-        <label>Factory</label>
-        <select value={selectedFactory} onChange={e => setSelectedFactory(e.target.value)}>
+      <div className="mb-2">
+        <label className="block text-sm font-medium text-gray-700 mb-1">Factory</label>
+        <select value={selectedFactory} onChange={e => setSelectedFactory(e.target.value)} className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-amber-600 focus:ring-2 focus:ring-amber-200 text-sm">
           <option value="">All Factories</option>
           {factories.map(f => (
             <option key={f.id} value={f.id}>{f.name}</option>
@@ -112,13 +112,13 @@ const PermitAnalyticsFarmer = ({ societyId }) => {
         </select>
       </div>
       {/* Date Range Filter */}
-      <div>
-        <input type="date" value={dateRange.start} onChange={e => setDateRange({ ...dateRange, start: e.target.value })} />
-        <input type="date" value={dateRange.end} onChange={e => setDateRange({ ...dateRange, end: e.target.value })} />
+      <div className="flex flex-col sm:flex-row gap-2 mb-2">
+        <input type="date" value={dateRange.start} onChange={e => setDateRange({ ...dateRange, start: e.target.value })} className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-amber-600 focus:ring-2 focus:ring-amber-200 text-sm" />
+        <input type="date" value={dateRange.end} onChange={e => setDateRange({ ...dateRange, end: e.target.value })} className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-amber-600 focus:ring-2 focus:ring-amber-200 text-sm" />
       </div>
       {/* Download Report Button */}
       <button
-        className="px-4 py-2 rounded bg-amber-600 text-white font-semibold hover:bg-amber-700"
+        className="px-4 py-2 rounded bg-amber-600 text-white font-semibold hover:bg-amber-700 w-full sm:w-auto"
         onClick={() => setIsDownloadModalOpen(true)}
       >
         Download Report
@@ -155,7 +155,7 @@ const PermitAnalyticsFarmer = ({ societyId }) => {
             xAxisKey="totalKg"
             yAxisKey="grade"
             barColor="#8884d8"
-            title="Top 3 Coffee Grades"
+            title="Top Performing Coffee Grades"
             xAxisLabel="Total Coffee (kg)"
             yAxisLabel="Grade"
             domain={dummyAxis.domain}
@@ -182,7 +182,7 @@ const PermitAnalyticsFarmer = ({ societyId }) => {
             xAxisKey="totalKg"
             yAxisKey="factory"
             barColor="#82ca9d"
-            title="Top 3 Factories"
+            title="Top Performing Factories"
             xAxisLabel="Total Coffee (kg)"
             yAxisLabel="Factory"
             domain={dummyAxis.domain}
@@ -213,7 +213,7 @@ const PermitAnalyticsFarmer = ({ societyId }) => {
           setDateRange({ start: sevenDaysAgo, end: today, granularity: 'daily' });
           setExcludedGrades([]);
         }}
-        className="px-4 py-2 rounded bg-amber-200 text-amber-800 font-semibold hover:bg-amber-300 cursor-pointer"
+        className="px-4 py-2 rounded bg-amber-200 text-amber-800 font-semibold hover:bg-amber-300 cursor-pointer w-full sm:w-auto"
       >
         Clear Filters
       </button>
