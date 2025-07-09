@@ -20,6 +20,7 @@ const PermitList = () => {
   const [selectedPermits, setSelectedPermits] = useState([]);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const { showToast } = useToast();
+  const [actionLoading, setActionLoading] = useState(false);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -130,6 +131,7 @@ const PermitList = () => {
   };
 
   const handleCancelSelected = async () => {
+    setActionLoading(true);
     try {
       // Only allow cancel for pending permits
       const pendingPermitIds = selectedPermits.filter(id => {
@@ -153,6 +155,7 @@ const PermitList = () => {
       showToast("Failed to cancel selected permits.", "error");
     } finally {
       setShowCancelModal(false);
+      setActionLoading(false);
     }
   };
 
@@ -181,7 +184,7 @@ const PermitList = () => {
     <div className="space-y-6 bg-amber-50 min-h-screen">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Permit List</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Pending Permits</h1>
           <p className="mt-1 text-sm text-gray-500">
             {isStaff
               ? "View and manage all coffee movement permits."
@@ -193,7 +196,7 @@ const PermitList = () => {
         {isSocietyManager && (
           <Link
             to="/permits/new"
-            className="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium bg-teal-600 text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+            className="inline-flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium bg-teal-600 text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
           >
             <PlusIcon className="h-5 w-5 mr-2" />
             Add Permit
@@ -434,16 +437,18 @@ const PermitList = () => {
             </p>
             <div className="flex justify-end space-x-3">
               <button
-                onClick={() => setShowCancelModal(false)}
-                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                onClick={actionLoading ? undefined : () => setShowCancelModal(false)}
+                disabled={actionLoading}
+                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCancelSelected}
-                className="px-4 py-2 text-white rounded bg-red-600 hover:bg-red-700"
+                disabled={actionLoading}
+                className="px-4 py-2 text-white rounded bg-red-600 hover:bg-red-700 disabled:opacity-50"
               >
-                Confirm
+                {actionLoading ? (<span className="flex items-center"><span className="animate-spin mr-2 h-4 w-4 border-b-2 border-white rounded-full"></span>Cancelling...</span>) : "Confirm"}
               </button>
             </div>
           </div>

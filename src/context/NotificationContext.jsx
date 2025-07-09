@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import axiosInstance from '../utils/AxiosInstance';
 import { useAuth } from '../context/AuthContext'; // adjust path as needed
 import { useLocation } from 'react-router-dom';
+import { useToast } from './ToastContext'; // Added import for useToast
 
 const NotificationContext = createContext();
 
@@ -17,6 +18,7 @@ export const NotificationProvider = ({ children }) => {
   const retryRef = React.useRef(0);
   const { isAuthenticated } = useAuth();
   const location = useLocation();
+  const { showToast } = useToast ? useToast() : { showToast: undefined };
 
   // Helper to check if current path is a public page
   const isPublicPage = (
@@ -44,8 +46,8 @@ export const NotificationProvider = ({ children }) => {
 
   const setupWebSocket = useCallback(() => {
     if (isPublicPage) return null; // Don't connect websocket on public pages
-    const wsUrl = "wss://cmp-server-kaelstormproxy9126-0gw8s8yb.leapcell.dev/ws/notifications/";
-    // const wsUrl = "ws://localhost:8000/ws/notifications/";
+    // const wsUrl = "wss://cmp-server-kaelstormproxy9126-0gw8s8yb.leapcell.dev/ws/notifications/";
+    const wsUrl = "ws://localhost:8000/ws/notifications/";
     const socket = new window.WebSocket(wsUrl);
     setWs(socket);
 
@@ -90,7 +92,11 @@ export const NotificationProvider = ({ children }) => {
       await axiosInstance.patch(`/auth/notifications/${id}/`, { is_read: true });
       setNotifications((prev) => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
     } catch (err) {
-      // Optionally handle error
+      if (showToast) {
+        showToast('Failed to mark notification as read', 'error');
+      } else {
+        console.error('Failed to mark notification as read', err);
+      }
     }
   };
 

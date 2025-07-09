@@ -25,6 +25,7 @@ const SocietyDetail = () => {
   const { showToast } = useToast();
   const [actionModal, setActionModal] = useState({ show: false, action: null });
   const [rejectionReason, setRejectionReason] = useState('');
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     fetchSociety();
@@ -198,27 +199,38 @@ const SocietyDetail = () => {
             )}
             <div className="flex justify-end space-x-3">
               <button
-                onClick={() => {
+                onClick={actionLoading ? undefined : () => {
                   setActionModal({ show: false, action: null });
                   setRejectionReason('');
                 }}
-                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                disabled={actionLoading}
+                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 onClick={async () => {
-                  if (actionModal.action === 'approve') {
-                    await handleApprove();
-                  } else {
-                    await handleReject();
+                  setActionLoading(true);
+                  try {
+                    if (actionModal.action === 'approve') {
+                      await handleApprove();
+                    } else {
+                      await handleReject();
+                    }
+                    setActionModal({ show: false, action: null });
+                    setRejectionReason('');
+                  } finally {
+                    setActionLoading(false);
                   }
-                  setActionModal({ show: false, action: null });
-                  setRejectionReason('');
                 }}
-                className={`px-4 py-2 text-white rounded ${actionModal.action === 'approve' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'}`}
+                className={`px-4 py-2 text-white rounded ${actionModal.action === 'approve' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'} disabled:opacity-50`}
+                disabled={actionLoading}
               >
-                {actionModal.action === 'approve' ? 'Approve' : 'Reject'}
+                {actionLoading ? (
+                  <span className="flex items-center"><span className="animate-spin mr-2 h-4 w-4 border-b-2 border-white rounded-full"></span>{actionModal.action === 'approve' ? 'Approving...' : 'Rejecting...'}</span>
+                ) : (
+                  actionModal.action === 'approve' ? 'Approve' : 'Reject'
+                )}
               </button>
             </div>
           </div>

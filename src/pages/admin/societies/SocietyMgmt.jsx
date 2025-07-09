@@ -46,6 +46,7 @@ const SocietyMgmt = () => {
     action: null, // "approve" or "reject"
   });
   const [rejectionReason, setRejectionReason] = useState("");
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     fetchSocieties();
@@ -432,23 +433,34 @@ const SocietyMgmt = () => {
             )}
             <div className="flex justify-end space-x-3">
               <button
-                onClick={() => {
+                onClick={actionLoading ? undefined : () => {
                   setBulkActionModal({ show: false, action: null });
                   setRejectionReason("");
                 }}
-                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                disabled={actionLoading}
+                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 onClick={async () => {
-                  setBulkActionModal({ show: false, action: null });
-                  await handleBulkAction(bulkActionModal.action, rejectionReason);
-                  setRejectionReason("");
+                  setActionLoading(true);
+                  try {
+                    setBulkActionModal({ show: false, action: null });
+                    await handleBulkAction(bulkActionModal.action, rejectionReason);
+                    setRejectionReason("");
+                  } finally {
+                    setActionLoading(false);
+                  }
                 }}
-                className={`px-4 py-2 text-white rounded ${bulkActionModal.action === "approve" ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"}`}
+                className={`px-4 py-2 text-white rounded ${bulkActionModal.action === "approve" ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"} disabled:opacity-50`}
+                disabled={actionLoading || (bulkActionModal.action === 'reject' && !rejectionReason.trim())}
               >
-                {bulkActionModal.action === "approve" ? "Approve" : "Reject"}
+                {actionLoading ? (
+                  <span className="flex items-center"><span className="animate-spin mr-2 h-4 w-4 border-b-2 border-white rounded-full"></span>Processing...</span>
+                ) : (
+                  bulkActionModal.action === "approve" ? "Approve" : "Reject"
+                )}
               </button>
             </div>
           </div>

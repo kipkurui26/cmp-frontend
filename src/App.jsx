@@ -45,76 +45,79 @@ import CoffeePrice from "./pages/farmer/coffee/CoffeePrice";
 import SocietyDetail from "./pages/admin/societies/SocietyDetail";
 import FarmerAnalytics from "./pages/farmer/analytics/FarmerAnalytics";
 import SocietyProfile from "./pages/farmer/profile/SocietyProfile";
+import { SidebarProvider } from "./context/SidebarContext";
 
 function App() {
   return (
     <ToastProvider>
       <AuthProvider>
         <NotificationProvider>
-          <ErrorBoundary>
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/logout" element={<Logout />} />
-              <Route path="/activation" element={<Activation />} />
-              <Route path="/cancel-application/:token" element={<CancelApplication />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password/:uid/:token" element={<ResetPassword />} />
+          <SidebarProvider>
+            <ErrorBoundary>
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/logout" element={<Logout />} />
+                <Route path="/activation" element={<Activation />} />
+                <Route path="/cancel-application/:token" element={<CancelApplication />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password/:uid/:token" element={<ResetPassword />} />
 
-              {/* Protected Routes */}
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute requiredRole={ROLES.FARMER}>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              >
-                {/* Farmer Dashboard Nested Routes */}
-                <Route index element={<FarmerDashboardOverview />} />
-                <Route path="permits/" element={<PermitMgmt />} />
-                <Route path="permits/new" element={<NewPermit />} />
-                <Route path="permits/:permitId" element={<FarmerPermitDetail />} />
-                <Route path="factories" element={<FactoryMgmt />} />
-                <Route path="factories/new" element={<FactoryForm />} />
-                <Route path="factories/:factoryId" element={<FactoryForm />} />
-                <Route path="coffee-management" element={<CoffeePrice />} />
-                <Route path="analytics" element={<FarmerAnalytics />} />
-                <Route path="profile" element={<SocietyProfile />} />
-              </Route>
+                {/* Protected Routes */}
+                <Route
+                  path="/"
+                  element={
+                    <ProtectedRoute requiredRole={ROLES.FARMER}>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                >
+                  {/* Farmer Dashboard Nested Routes */}
+                  <Route index element={<FarmerDashboardOverview />} />
+                  <Route path="permits/" element={<PermitMgmt />} />
+                  <Route path="permits/new" element={<NewPermit />} />
+                  <Route path="permits/:permitId" element={<FarmerPermitDetail />} />
+                  <Route path="factories" element={<FactoryMgmt />} />
+                  <Route path="factories/new" element={<FactoryForm />} />
+                  <Route path="factories/:factoryId" element={<FactoryForm />} />
+                  <Route path="coffee-management" element={<CoffeePrice />} />
+                  <Route path="analytics" element={<FarmerAnalytics />} />
+                  <Route path="profile" element={<SocietyProfile />} />
+                </Route>
 
-              {/* Admin Dashboard Routes */}
-              <Route
-                path="/admin"
-                element={
-                  <ProtectedRoute requiredRole={ROLES.ADMIN}>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              >
-                <Route index element={<DashboardOverview />} />
-                <Route path="users" element={<UsersList />} />
-                <Route path="approval-queue" element={<PermitApprovalQueue />} />
-                <Route path="coffee-grades" element={<GradeOverview />} />
-                <Route path="coffee-grades/:gradeId" element={<GradeDetail />} />
-                <Route path="coffee-grades/register" element={<GradeRegister />} />
-                <Route path="permits" element={<PermitManagement />} />
-                <Route path="permits/:permitId" element={<PermitDetails />} />
-                <Route path="warehouses" element={<WarehouseList />} />
-                <Route path="warehouses/:warehouseId" element={<WarehouseDetail />} />
-                <Route path="warehouses/:warehouseId/edit" element={<WarehouseEdit />} />
-                <Route path="societies" element={<SocietyMgmt />} />
-                <Route path="societies/register" element={<SocietyRegister />} />
-                <Route path="societies/:id" element={<SocietyDetail />} />
-                <Route path="analytics" element={<AdminAnalytics />} />
-                <Route path="profile" element={<AdminProfile />} />
-              </Route>
+                {/* Admin Dashboard Routes */}
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute requiredRole={ROLES.ADMIN}>
+                      <AdminDashboard />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route index element={<DashboardOverview />} />
+                  <Route path="users" element={<UsersList />} />
+                  <Route path="approval-queue" element={<PermitApprovalQueue />} />
+                  <Route path="coffee-grades" element={<GradeOverview />} />
+                  <Route path="coffee-grades/:gradeId" element={<GradeDetail />} />
+                  <Route path="coffee-grades/register" element={<GradeRegister />} />
+                  <Route path="permits" element={<PermitManagement />} />
+                  <Route path="permits/:permitId" element={<PermitDetails />} />
+                  <Route path="warehouses" element={<WarehouseList />} />
+                  <Route path="warehouses/:warehouseId" element={<WarehouseDetail />} />
+                  <Route path="warehouses/:warehouseId/edit" element={<WarehouseEdit />} />
+                  <Route path="societies" element={<SocietyMgmt />} />
+                  <Route path="societies/register" element={<SocietyRegister />} />
+                  <Route path="societies/:id" element={<SocietyDetail />} />
+                  <Route path="analytics" element={<AdminAnalytics />} />
+                  <Route path="profile" element={<AdminProfile />} />
+                </Route>
 
-              {/* 404 Fallback Route */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </ErrorBoundary>
+                {/* 404 Fallback Route */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </ErrorBoundary>
+          </SidebarProvider>
         </NotificationProvider>
       </AuthProvider>
     </ToastProvider>

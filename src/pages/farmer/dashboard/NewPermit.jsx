@@ -219,7 +219,7 @@ const NewPermit = () => {
                   type="text"
                   value={user?.managed_society?.name || "Not assigned"}
                   disabled
-                  className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm py-2"
+                  className="appearance-none relative block w-full px-3 py-2 border border-amber-300 bg-gray-50 placeholder-gray-800 text-black rounded-md focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
                 />
               </div>
               <div>
@@ -232,7 +232,7 @@ const NewPermit = () => {
                 <select
                   id="factory_id"
                   name="factory_id"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm py-2"
+                  className="appearance-none relative block w-full px-3 py-2 border border-amber-300 placeholder-gray-800 text-black rounded-md focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
                   value={locationDetails.factory_id}
                   onChange={handleLocationChange}
                   disabled={!user?.managed_society?.id}
@@ -255,7 +255,7 @@ const NewPermit = () => {
                 <select
                   id="warehouse_id"
                   name="warehouse_id"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm py-2"
+                  className="appearance-none relative block w-full px-3 py-2 border border-amber-300 placeholder-gray-800 text-black rounded-md focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
                   value={locationDetails.warehouse_id}
                   onChange={handleLocationChange}
                   disabled={!locationDetails.factory_id}
@@ -292,7 +292,7 @@ const NewPermit = () => {
                   <select
                     id="coffee-grade"
                     name="coffee-grade"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm py-2"
+                    className="appearance-none relative block w-full px-3 py-2 border border-amber-300 placeholder-gray-800 text-black rounded-md focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
                     value={selectedCoffeeGradeId}
                     onChange={handleCoffeeGradeChange}
                   >
@@ -323,7 +323,7 @@ const NewPermit = () => {
                     type="number"
                     name="number-of-bags"
                     id="number-of-bags"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm py-2"
+                    className="appearance-none relative block w-full px-3 py-2 border border-amber-300 placeholder-gray-800 text-black rounded-md focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
                     value={numberOfBags}
                     onChange={handleNumberOfBagsChange}
                     min="1"
@@ -632,28 +632,35 @@ const NewPermit = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-amber-50 py-6 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen bg-amber-50 py-4 px-2 sm:px-4 md:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto space-y-6">
+        {/* Mobile Back Button */}
+        <div className="block sm:hidden mb-2">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center px-3 py-2 rounded-md bg-white text-gray-700 shadow-sm border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-500"
+          >
+            <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            Back
+          </button>
+        </div>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            New Permit Application
-          </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Follow the simple steps below to apply for a permit.
-          </p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">New Permit Application</h1>
+          <p className="mt-1 text-sm text-gray-500">Follow the simple steps below to apply for a permit.</p>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* Left Section: Steps Sidebar */}
-          <div className="lg:w-1/4 bg-white rounded-lg shadow-sm p-6 space-y-4 h-fit">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Application Steps
-            </h2>
-            <nav className="flex flex-col space-y-4">
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
+          {/* Steps Sidebar - sticky on mobile, sidebar on desktop */}
+          <div className="w-full lg:w-1/4 bg-white rounded-lg shadow-sm p-4 sm:p-6 space-y-4 h-fit sticky top-0 z-10">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900">Application Steps</h2>
+            <nav className="flex flex-row lg:flex-col space-x-4 lg:space-x-0 lg:space-y-4">
               {steps.map((step) => (
-                <div key={step.number} className="flex items-center">
+                <div key={step.number} className="flex items-center flex-1">
                   <div
-                    className={`flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full border-2 ${
+                    className={`flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full border-2 ${
                       currentStep === step.number
                         ? "border-teal-600 bg-teal-600 text-white"
                         : "border-gray-300 text-gray-500"
@@ -662,10 +669,8 @@ const NewPermit = () => {
                     {step.number}
                   </div>
                   <div
-                    className={`ml-3 text-sm font-medium ${
-                      currentStep === step.number
-                        ? "text-teal-600"
-                        : "text-gray-900"
+                    className={`ml-2 sm:ml-3 text-xs sm:text-sm font-medium ${
+                      currentStep === step.number ? "text-teal-600" : "text-gray-900"
                     }`}
                   >
                     {step.name}
@@ -675,31 +680,58 @@ const NewPermit = () => {
             </nav>
           </div>
 
-          {/* Right Section: Form Content */}
-          <div className="lg:w-3/4 bg-white rounded-lg shadow-sm p-6">
+          {/* Form Content */}
+          <div className="flex-1 w-full bg-white rounded-lg shadow-sm p-4 sm:p-6">
             {renderStepContent()}
 
             {/* Navigation Buttons */}
-            <div className="mt-8 flex justify-between">
-              {currentStep > 1 && (
-                <button
-                  type="button"
-                  onClick={prevStep}
-                  className="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                  disabled={loading}
-                >
-                  Previous Step
-                </button>
-              )}
-              {currentStep < 3 && (
-                <button
-                  type="button"
-                  onClick={nextStep}
-                  className="ml-auto inline-flex justify-center rounded-md bg-teal-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-teal-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
-                  disabled={loading}
-                >
-                  Next Step
-                </button>
+            <div className="mt-8">
+              {/* Step 2: Next button comes first on small screens */}
+              {currentStep === 2 ? (
+                <div className="flex flex-col sm:flex-row justify-between gap-3">
+                  {/* On small screens, Next first, then Previous */}
+                  <button
+                    type="button"
+                    onClick={nextStep}
+                    className="inline-flex justify-center rounded-md bg-teal-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-teal-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 w-full sm:w-auto order-1 sm:order-none"
+                    disabled={loading}
+                  >
+                    Next Step
+                  </button>
+                  {currentStep > 1 && (
+                    <button
+                      type="button"
+                      onClick={prevStep}
+                      className="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 w-full sm:w-auto order-2 sm:order-none"
+                      disabled={loading}
+                    >
+                      Previous Step
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="flex flex-col sm:flex-row justify-between gap-3">
+                  {currentStep > 1 && (
+                    <button
+                      type="button"
+                      onClick={prevStep}
+                      className="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 w-full sm:w-auto"
+                      disabled={loading}
+                    >
+                      Previous Step
+                    </button>
+                  )}
+                  {currentStep < 3 && (
+                    <button
+                      type="button"
+                      onClick={nextStep}
+                      className="ml-auto inline-flex justify-center rounded-md bg-teal-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-teal-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 w-full sm:w-auto"
+                      disabled={loading}
+                    >
+                      Next Step
+                    </button>
+                  )}
+                </div>
               )}
             </div>
           </div>

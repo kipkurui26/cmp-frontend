@@ -39,6 +39,7 @@ const DownloadReportModal = ({
     availableSections.forEach(cfg => initial[cfg.label] = true);
     return initial;
   });
+  const [exportLoading, setExportLoading] = React.useState(false);
 
   // Filter main data section by excludedGrades if present
   const filteredMain = useMemo(() => {
@@ -221,8 +222,9 @@ const DownloadReportModal = ({
       </div>
       <div className="flex justify-end gap-2">
         <button
-          className="px-4 py-2 rounded bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300"
-          onClick={onClose}
+          className="px-4 py-2 rounded bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 disabled:opacity-50"
+          onClick={exportLoading ? undefined : onClose}
+          disabled={exportLoading}
         >
           Cancel
         </button>
@@ -231,20 +233,36 @@ const DownloadReportModal = ({
             data={exportData}
             headers={headers}
             filename={`${fileName}.csv`}
-            className={`px-4 py-2 rounded bg-amber-600 text-white font-semibold hover:bg-amber-700 flex items-center gap-1${isDownloadDisabled ? ' pointer-events-none opacity-50' : ''}`}
-            onClick={onClose}
-            aria-disabled={isDownloadDisabled}
-            tabIndex={isDownloadDisabled ? -1 : 0}
+            className={`px-4 py-2 rounded bg-amber-600 text-white font-semibold hover:bg-amber-700 flex items-center gap-1${isDownloadDisabled || exportLoading ? ' pointer-events-none opacity-50' : ''}`}
+            onClick={e => {
+              setExportLoading(true);
+              if (typeof onClose === 'function') onClose(e);
+              setTimeout(() => setExportLoading(false), 1000); // Simulate async for UX
+            }}
+            aria-disabled={isDownloadDisabled || exportLoading}
+            tabIndex={isDownloadDisabled || exportLoading ? -1 : 0}
           >
-            Download CSV
+            {exportLoading ? (
+              <span className="flex items-center"><span className="animate-spin mr-2 h-4 w-4 border-b-2 border-white rounded-full"></span>Exporting...</span>
+            ) : (
+              "Download CSV"
+            )}
           </CSVLink>
         ) : (
           <button
-            onClick={handlePDFExport}
-            className={`px-4 py-2 rounded bg-amber-600 text-white font-semibold hover:bg-amber-700${isDownloadDisabled ? ' opacity-50 cursor-not-allowed' : ''}`}
-            disabled={isDownloadDisabled}
+            onClick={async () => {
+              setExportLoading(true);
+              await handlePDFExport();
+              setExportLoading(false);
+            }}
+            className={`px-4 py-2 rounded bg-amber-600 text-white font-semibold hover:bg-amber-700${isDownloadDisabled || exportLoading ? ' opacity-50 cursor-not-allowed' : ''}`}
+            disabled={isDownloadDisabled || exportLoading}
           >
-            Download PDF
+            {exportLoading ? (
+              <span className="flex items-center"><span className="animate-spin mr-2 h-4 w-4 border-b-2 border-white rounded-full"></span>Exporting...</span>
+            ) : (
+              "Download PDF"
+            )}
           </button>
         )}
       </div>

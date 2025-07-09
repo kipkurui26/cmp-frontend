@@ -97,17 +97,17 @@ const FactoryMgmt = () => {
   }
 
   return (
-    <div className="p-6 bg-amber-50 min-h-screen">
+    <div className="p-2 sm:p-4 md:p-6 bg-amber-50 min-h-screen">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">All Factories</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">All Factories</h1>
           <p className="mt-1 text-sm text-gray-500">
             View and manage all your coffee factories. You can add, edit, or remove factories associated with your society.
           </p>
         </div>
         <Link
           to="/factories/new"
-          className="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium bg-teal-600 text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+          className="inline-flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium bg-teal-600 text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
         >
           <PlusIcon className="h-5 w-5 mr-2" />
           Add Factory
@@ -115,67 +115,69 @@ const FactoryMgmt = () => {
       </div>
 
       <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">County</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sub County</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Added</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Updated</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {paginatedFactories.length === 0 ? (
+        <div className="overflow-x-auto w-full">
+          <table className="min-w-full divide-y divide-gray-200 text-xs sm:text-sm">
+            <thead className="bg-gray-50">
               <tr>
-                <td colSpan={7} className="px-4 py-4 sm:px-6 text-gray-500 text-center">
-                  No factories found.
-                </td>
+                <th className="px-4 sm:px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th className="px-4 sm:px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">County</th>
+                <th className="px-4 sm:px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Sub County</th>
+                <th className="px-4 sm:px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Date Added</th>
+                <th className="px-4 sm:px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Date Updated</th>
+                <th className="px-4 sm:px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-4 sm:px-6 py-3 text-right font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
-            ) : (
-              paginatedFactories.map((factory) => (
-                <tr key={factory.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{factory.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{factory.county}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{factory.sub_county}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{new Date(factory.date_added).toLocaleString()}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{new Date(factory.date_updated).toLocaleString()}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        factory.is_active
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {factory.is_active ? "Active" : "Inactive"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-end space-x-2">
-                    <Link
-                      to={`/factories/${factory.id}`}
-                      className="text-teal-600 hover:text-teal-900"
-                      title="Edit"
-                      aria-label="Edit"
-                    >
-                      <PencilIcon className="h-5 w-5" />
-                    </Link>
-                    <button
-                      onClick={() => handleDelete(factory.id)}
-                      className="text-red-600 hover:text-red-900"
-                      title="Delete"
-                      aria-label="Delete"
-                    >
-                      <TrashIcon className="h-5 w-5" />
-                    </button>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {paginatedFactories.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-4 py-4 sm:px-6 text-gray-500 text-center">
+                    No factories found.
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                paginatedFactories.map((factory) => (
+                  <tr key={factory.id}>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-900">{factory.name}</td>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-900">{factory.county}</td>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-900">{factory.sub_county}</td>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-900">{new Date(factory.date_added).toLocaleString()}</td>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-900">{new Date(factory.date_updated).toLocaleString()}</td>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          factory.is_active
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {factory.is_active ? "Active" : "Inactive"}
+                      </span>
+                    </td>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-right font-medium flex justify-end space-x-2">
+                      <Link
+                        to={`/factories/${factory.id}`}
+                        className="text-teal-600 hover:text-teal-900"
+                        title="Edit"
+                        aria-label="Edit"
+                      >
+                        <PencilIcon className="h-5 w-5" />
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(factory.id)}
+                        className="text-red-600 hover:text-red-900"
+                        title="Delete"
+                        aria-label="Delete"
+                      >
+                        <TrashIcon className="h-5 w-5" />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
       {/* Pagination */}
       <Pagination

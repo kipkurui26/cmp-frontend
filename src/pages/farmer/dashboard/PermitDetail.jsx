@@ -16,6 +16,7 @@ const PermitDetail = () => {
   const [error, setError] = useState(null);
   const { showToast } = useToast();
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     const fetchPermitDetails = async () => {
@@ -52,8 +53,8 @@ const PermitDetail = () => {
   };
 
   const handleCancel = async () => {
+    setActionLoading(true);
     try {
-      setLoading(true);
       await AxiosInstance.post(`/permits/permits/${permitId}/cancel/`);
       // Refresh permit data after cancellation
       const response = await AxiosInstance.get(`/permits/permits/${permitId}/`);
@@ -64,7 +65,7 @@ const PermitDetail = () => {
       setError('Failed to cancel permit. Please try again.');
       showToast('Failed to cancel permit. Please try again.', 'error');
     } finally {
-      setLoading(false);
+      setActionLoading(false);
       setShowCancelModal(false);
     }
   };
@@ -137,22 +138,22 @@ const PermitDetail = () => {
 
   return (
     <div className="space-y-6 bg-amber-50 min-h-screen">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
+        <div className="flex items-center space-x-2 sm:space-x-4">
           <button
             onClick={() => navigate('/permits')}
             className="text-gray-600 hover:text-gray-900"
           >
             <ArrowLeftIcon className="h-6 w-6" />
           </button>
-          <h1 className="text-2xl font-semibold text-gray-900">Permit Details</h1>
+          <h1 className="text-lg sm:text-2xl font-semibold text-gray-900">Permit Details</h1>
         </div>
-        <div className="space-x-2">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-2 w-full sm:w-auto">
           {permitData.status === 'PENDING' && (
             <button
               onClick={() => setShowCancelModal(true)}
               disabled={loading}
-              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
             >
               <XCircleIcon className="h-5 w-5 mr-2" />
               Cancel Application
@@ -162,7 +163,7 @@ const PermitDetail = () => {
             <button
               onClick={handleDownload}
               disabled={loading}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
             >
               <DocumentArrowDownIcon className="h-5 w-5 mr-2" />
               Download Permit
@@ -275,16 +276,18 @@ const PermitDetail = () => {
             </p>
             <div className="flex justify-end space-x-3">
               <button
-                onClick={() => setShowCancelModal(false)}
-                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                onClick={actionLoading ? undefined : () => setShowCancelModal(false)}
+                disabled={actionLoading}
+                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCancel}
-                className="px-4 py-2 text-white rounded bg-red-600 hover:bg-red-700"
+                disabled={actionLoading}
+                className="px-4 py-2 text-white rounded bg-red-600 hover:bg-red-700 disabled:opacity-50"
               >
-                Confirm
+                {actionLoading ? (<span className="flex items-center"><span className="animate-spin mr-2 h-4 w-4 border-b-2 border-white rounded-full"></span>Cancelling...</span>) : "Confirm"}
               </button>
             </div>
           </div>

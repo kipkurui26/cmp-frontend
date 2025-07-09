@@ -12,6 +12,7 @@ const WarehouseDetail = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const { showToast } = useToast();
   const [error, setError] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     fetchWarehouse();
@@ -32,12 +33,15 @@ const WarehouseDetail = () => {
   };
 
   const handleDelete = async () => {
+    setDeleteLoading(true);
     try {
       await AxiosInstance.delete(`warehouse/warehouses/${warehouseId}/`);
       showToast('Warehouse deleted successfully!', "success");
       setTimeout(() => navigate('/admin/warehouses'), 1500);
     } catch (err) {
       showToast(err.response?.data?.detail || 'Failed to delete warehouse.', "error");
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -169,16 +173,18 @@ const WarehouseDetail = () => {
             </p>
             <div className="flex justify-end space-x-3">
               <button
-                onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                onClick={deleteLoading ? undefined : () => setShowDeleteModal(false)}
+                disabled={deleteLoading}
+                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDelete}
-                className="px-4 py-2 text-white rounded bg-red-600 hover:bg-red-700"
+                disabled={deleteLoading}
+                className="px-4 py-2 text-white rounded bg-red-600 hover:bg-red-700 disabled:opacity-50"
               >
-                Delete
+                {deleteLoading ? (<span className="flex items-center"><span className="animate-spin mr-2 h-4 w-4 border-b-2 border-white rounded-full"></span>Deleting...</span>) : "Delete"}
               </button>
             </div>
           </div>
