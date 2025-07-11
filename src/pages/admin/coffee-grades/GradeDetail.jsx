@@ -9,6 +9,7 @@ import {
 } from "@heroicons/react/24/outline";
 import AxiosInstance from "../../../utils/AxiosInstance";
 import { useToast } from "../../../context/ToastContext";
+import { useForm } from "react-hook-form";
 
 const GradeDetail = () => {
   const { gradeId } = useParams();
@@ -18,16 +19,27 @@ const GradeDetail = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-  const [formData, setFormData] = useState({
-    grade: "",
-    weight_per_bag: "",
-    description: "",
-  });
   const { showToast } = useToast();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+    setValue,
+  } = useForm({
+    defaultValues: {
+      grade: "",
+      weight_per_bag: "",
+      description: "",
+    },
+    mode: "onTouched",
+  });
+
   useEffect(() => {
     fetchGradeDetails();
+    // eslint-disable-next-line
   }, [gradeId]);
 
   const fetchGradeDetails = async () => {
@@ -38,7 +50,7 @@ const GradeDetail = () => {
         `/permits/coffee-grades/${gradeId}/`
       );
       setGrade(response.data);
-      setFormData({
+      reset({
         grade: response.data.grade,
         weight_per_bag: response.data.weight_per_bag,
         description: response.data.description || "",
@@ -58,22 +70,13 @@ const GradeDetail = () => {
     }
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     try {
       setError(null);
       setSuccessMessage(null);
       const response = await AxiosInstance.patch(
         `/permits/coffee-grades/${gradeId}/`,
-        formData
+        data
       );
       setGrade(response.data);
       setIsEditing(false);
@@ -181,7 +184,7 @@ const GradeDetail = () => {
       </div>
 
       {isEditing ? (
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <label
               htmlFor="grade"
@@ -190,15 +193,18 @@ const GradeDetail = () => {
               Grade
             </label>
             <input
+              {...register('grade', {
+                required: 'Grade is required',
+                minLength: { value: 2, message: 'Min 2 characters' },
+                maxLength: { value: 50, message: 'Max 50 characters' },
+              })}
               type="text"
               name="grade"
               id="grade"
-              value={formData.grade}
-              onChange={handleInputChange}
               className="mt-1 block w-full rounded-md border border-amber-300 px-3 py-2 placeholder-gray-800 text-black focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
               placeholder="Grade"
-              required
             />
+            {errors.grade && <p className="text-red-600 text-xs mt-1">{errors.grade.message}</p>}
           </div>
           <div>
             <label
@@ -208,16 +214,20 @@ const GradeDetail = () => {
               Weight per Bag (kg)
             </label>
             <input
+              {...register('weight_per_bag', {
+                required: 'Weight is required',
+                min: { value: 1, message: 'Must be at least 1kg' },
+                max: { value: 1000, message: 'Must be less than 1000kg' },
+                valueAsNumber: true,
+              })}
               type="number"
               step="0.01"
               name="weight_per_bag"
               id="weight_per_bag"
-              value={formData.weight_per_bag}
-              onChange={handleInputChange}
               className="mt-1 block w-full rounded-md border border-amber-300 px-3 py-2 placeholder-gray-800 text-black focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
               placeholder="Weight per Bag (kg)"
-              required
             />
+            {errors.weight_per_bag && <p className="text-red-600 text-xs mt-1">{errors.weight_per_bag.message}</p>}
           </div>
           <div>
             <label
@@ -227,21 +237,24 @@ const GradeDetail = () => {
               Description
             </label>
             <textarea
+              {...register('description', {
+                maxLength: { value: 200, message: 'Max 200 characters' },
+              })}
               name="description"
               id="description"
-              value={formData.description}
-              onChange={handleInputChange}
               className="mt-1 block w-full min-h-24 rounded-md border border-amber-300 px-3 py-2 placeholder-gray-800 text-black focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm resize-none"
               placeholder="Description"
               rows={3}
             />
+            {errors.description && <p className="text-red-600 text-xs mt-1">{errors.description.message}</p>}
           </div>
           <div>
             <button
               type="submit"
               className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-amber-700 hover:bg-amber-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600"
+              disabled={isSubmitting}
             >
-              Save Changes
+              {isSubmitting ? 'Saving...' : 'Save Changes'}
             </button>
           </div>
         </form>

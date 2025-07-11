@@ -1,45 +1,37 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  ArrowLeftIcon,
-} from '@heroicons/react/24/outline';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import AxiosInstance from '../../../utils/AxiosInstance';
 import { useToast } from "../../../context/ToastContext";
+import { useForm } from 'react-hook-form';
 
 const GradeRegister = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    grade: '',
-    weight_per_bag: '',
-    description: '',
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState(null);
   const { showToast } = useToast();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm({
+    defaultValues: {
+      grade: '',
+      weight_per_bag: '',
+      description: '',
+    },
+    mode: 'onTouched',
+  });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setError(null);
-
+  const onSubmit = async (data) => {
     try {
-      await AxiosInstance.post('/permits/coffee-grades/', formData);
+      await AxiosInstance.post('/permits/coffee-grades/', data);
       showToast("Grade created successfully!", "success");
+      reset();
       setTimeout(() => {
         navigate('/admin/coffee-grades');
       }, 1200);
     } catch (error) {
       showToast(error.response?.data?.message || 'Failed to create grade. Please try again later.', "error");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -58,21 +50,23 @@ const GradeRegister = () => {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
         <div>
           <label htmlFor="grade" className="block text-sm font-medium text-gray-700">
             Grade
           </label>
           <input
+            {...register('grade', {
+              required: 'Grade is required',
+              minLength: { value: 2, message: 'Min 2 characters' },
+              maxLength: { value: 50, message: 'Max 50 characters' },
+            })}
             type="text"
-            name="grade"
             id="grade"
-            value={formData.grade}
-            onChange={handleInputChange}
             className="mt-1 block w-full rounded-md border border-amber-300 px-3 py-2 placeholder-gray-800 text-black focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
             placeholder="Grade"
-            required
           />
+          {errors.grade && <p className="text-red-600 text-xs mt-1">{errors.grade.message}</p>}
         </div>
 
         <div>
@@ -80,16 +74,19 @@ const GradeRegister = () => {
             Weight per Bag (kg)
           </label>
           <input
+            {...register('weight_per_bag', {
+              required: 'Weight is required',
+              min: { value: 1, message: 'Must be at least 1kg' },
+              max: { value: 1000, message: 'Must be less than 1000kg' },
+              valueAsNumber: true,
+            })}
             type="number"
             step="0.01"
-            name="weight_per_bag"
             id="weight_per_bag"
-            value={formData.weight_per_bag}
-            onChange={handleInputChange}
             className="mt-1 block w-full rounded-md border border-amber-300 px-3 py-2 placeholder-gray-800 text-black focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
             placeholder="Weight per Bag (kg)"
-            required
           />
+          {errors.weight_per_bag && <p className="text-red-600 text-xs mt-1">{errors.weight_per_bag.message}</p>}
         </div>
 
         <div>
@@ -97,14 +94,15 @@ const GradeRegister = () => {
             Description
           </label>
           <textarea
-            name="description"
+            {...register('description', {
+              maxLength: { value: 200, message: 'Max 200 characters' },
+            })}
             id="description"
-            value={formData.description}
-            onChange={handleInputChange}
             className="mt-1 block w-full min-h-24 rounded-md border border-amber-300 px-3 py-2 placeholder-gray-800 text-black focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm resize-none"
             placeholder="Description"
             rows={3}
           />
+          {errors.description && <p className="text-red-600 text-xs mt-1">{errors.description.message}</p>}
         </div>
 
         <div>

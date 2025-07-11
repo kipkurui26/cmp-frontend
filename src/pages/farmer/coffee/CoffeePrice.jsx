@@ -10,6 +10,7 @@ import AxiosInstance from "../../../utils/AxiosInstance";
 import { useAuth } from "../../../context/AuthContext";
 import coffeeBG from "../../../assets/coffee.jpg";
 import { useToast } from "../../../context/ToastContext";
+import { useForm } from 'react-hook-form';
 
 const CoffeePrice = () => {
   const navigate = useNavigate();
@@ -19,14 +20,24 @@ const CoffeePrice = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    society: "",
-    coffee_grade: "",
-    coffee_year: "",
-    price_per_bag: "",
-    effective_date: "",
-  });
   const { showToast } = useToast();
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    defaultValues: {
+      society: "",
+      coffee_grade: "",
+      coffee_year: "",
+      price_per_bag: "",
+      effective_date: "",
+    },
+    mode: 'onTouched',
+  });
 
   useEffect(() => {
     fetchPrices();
@@ -35,16 +46,14 @@ const CoffeePrice = () => {
 
   useEffect(() => {
     if (user && user.managed_society) {
-      setFormData((prev) => ({
-        ...prev,
-        society: user.managed_society.id,
-      }));
+      setValue('society', user.managed_society.id);
     } else if (user && user.role !== "ADMIN") {
       setError(
         "You are not authorized to manage coffee prices as you don't manage a society."
       );
       setIsLoading(false);
     }
+    // eslint-disable-next-line
   }, [user]);
 
   const fetchPrices = async () => {
@@ -67,18 +76,17 @@ const CoffeePrice = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     try {
-      if (!formData.society) {
+      if (!data.society) {
         setError("Society information is missing. Please log in as a society manager.");
         showToast("Society information is missing. Please log in as a society manager.", "error");
         return;
       }
-      await AxiosInstance.post("/societies/coffee-prices/", formData);
+      await AxiosInstance.post("/societies/coffee-prices/", data);
       setIsModalOpen(false);
       fetchPrices();
-      setFormData({
+      reset({
         society: user?.managed_society?.id || "",
         coffee_grade: "",
         coffee_year: "",
@@ -102,7 +110,7 @@ const CoffeePrice = () => {
       const response = await AxiosInstance.get(
         `/societies/coffee-prices/${id}/`
       );
-      setFormData({
+      reset({
         society: response.data.society,
         coffee_grade: response.data.coffee_grade,
         coffee_year: response.data.coffee_year,
@@ -158,7 +166,16 @@ const CoffeePrice = () => {
           </p>
         </div>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            setIsModalOpen(true);
+            reset({
+              society: user?.managed_society?.id || "",
+              coffee_grade: "",
+              coffee_year: "",
+              price_per_bag: "",
+              effective_date: "",
+            });
+          }}
           className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700"
         >
           <PlusIcon className="h-5 w-5 mr-2" />
@@ -254,10 +271,10 @@ const CoffeePrice = () => {
         >
           <div className="bg-white rounded-lg p-6 sm:p-8 max-w-sm sm:max-w-md w-full border border-amber-200 shadow-md">
             <h2 className="text-lg font-medium mb-4">Add New Coffee Price</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               {user?.managed_society && (
                 <p className="text-sm text-gray-600">
-                  Setting price for:{" "}
+                  Setting price for: {" "}
                   <span className="font-semibold">
                     {user.managed_society.name}
                   </span>
@@ -269,13 +286,10 @@ const CoffeePrice = () => {
                   Coffee Grade
                 </label>
                 <select
-                  name="coffee_grade"
-                  value={formData.coffee_grade}
-                  onChange={(e) =>
-                    setFormData({ ...formData, coffee_grade: e.target.value })
-                  }
+                  {...register('coffee_grade', {
+                    required: 'Coffee grade is required',
+                  })}
                   className="mt-1 block w-full rounded-md border border-amber-300 text-black px-3 py-2 focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
-                  required
                 >
                   <option value="">Select Grade</option>
                   {grades.map((grade) => (
@@ -284,6 +298,7 @@ const CoffeePrice = () => {
                     </option>
                   ))}
                 </select>
+                {errors.coffee_grade && <p className="text-red-600 text-xs mt-1">{errors.coffee_grade.message}</p>}
               </div>
 
               <div>
@@ -291,16 +306,18 @@ const CoffeePrice = () => {
                   Coffee Year
                 </label>
                 <input
+                  {...register('coffee_year', {
+                    required: 'Coffee year is required',
+                    pattern: {
+                      value: /^\d{4}\/\d{2}$/,
+                      message: 'Format: YYYY/YY (e.g., 2023/24)',
+                    },
+                  })}
                   type="text"
-                  name="coffee_year"
-                  value={formData.coffee_year}
-                  onChange={(e) =>
-                    setFormData({ ...formData, coffee_year: e.target.value })
-                  }
                   placeholder="YYYY/YY (e.g., 2023/24)"
                   className="mt-1 block w-full rounded-md border border-amber-300 placeholder-gray-800 text-black px-3 py-2 focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
-                  required
                 />
+                {errors.coffee_year && <p className="text-red-600 text-xs mt-1">{errors.coffee_year.message}</p>}
               </div>
 
               <div>
@@ -308,17 +325,17 @@ const CoffeePrice = () => {
                   Price per Bag (KES)
                 </label>
                 <input
+                  {...register('price_per_bag', {
+                    required: 'Price is required',
+                    min: { value: 1, message: 'Must be at least 1' },
+                    valueAsNumber: true,
+                  })}
                   type="number"
                   step="0.01"
-                  name="price_per_bag"
-                  value={formData.price_per_bag}
-                  onChange={(e) =>
-                    setFormData({ ...formData, price_per_bag: e.target.value })
-                  }
-                  className="mt-1 block w-full rounded-md border border-amber-300 placeholder-gray-800 text-black px-3 py-2 focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
                   placeholder="Price per Bag"
-                  required
+                  className="mt-1 block w-full rounded-md border border-amber-300 placeholder-gray-800 text-black px-3 py-2 focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
                 />
+                {errors.price_per_bag && <p className="text-red-600 text-xs mt-1">{errors.price_per_bag.message}</p>}
               </div>
 
               <div>
@@ -326,15 +343,13 @@ const CoffeePrice = () => {
                   Effective Date
                 </label>
                 <input
+                  {...register('effective_date', {
+                    required: 'Effective date is required',
+                  })}
                   type="date"
-                  name="effective_date"
-                  value={formData.effective_date}
-                  onChange={(e) =>
-                    setFormData({ ...formData, effective_date: e.target.value })
-                  }
                   className="mt-1 block w-full rounded-md border border-amber-300 text-black px-3 py-2 focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
-                  required
                 />
+                {errors.effective_date && <p className="text-red-600 text-xs mt-1">{errors.effective_date.message}</p>}
               </div>
 
               <div className="flex justify-end space-x-3">
@@ -348,8 +363,9 @@ const CoffeePrice = () => {
                 <button
                   type="submit"
                   className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-700 hover:bg-amber-800"
+                  disabled={isSubmitting}
                 >
-                  Save
+                  {isSubmitting ? 'Saving...' : 'Save'}
                 </button>
               </div>
             </form>

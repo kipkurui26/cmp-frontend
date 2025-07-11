@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from '../../../utils/AxiosInstance';
 import { useToast } from "../../../context/ToastContext";
 import { useAuth } from '../../../context/AuthContext';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { useForm } from 'react-hook-form';
 
 const FactoryForm = () => {
   const navigate = useNavigate();
@@ -11,25 +12,35 @@ const FactoryForm = () => {
   const isEditing = Boolean(factoryId);
   const { user } = useAuth();
   const { showToast } = useToast();
-
-  const [formData, setFormData] = useState({
-    name: '',
-    county: '',
-    sub_county: '',
-    is_active: true,
-  });
   const [loading, setLoading] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    defaultValues: {
+      name: '',
+      county: '',
+      sub_county: '',
+      is_active: true,
+    },
+    mode: 'onTouched',
+  });
 
   useEffect(() => {
     if (isEditing) {
       fetchFactory();
     }
+    // eslint-disable-next-line
   }, [factoryId, isEditing]);
 
   const fetchFactory = async () => {
     try {
       const response = await axiosInstance.get(`societies/factories/${factoryId}/`);
-      setFormData({
+      reset({
         name: response.data.name,
         county: response.data.county,
         sub_county: response.data.sub_county,
@@ -41,29 +52,17 @@ const FactoryForm = () => {
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     setLoading(true);
-
     if (!user?.managed_society?.id) {
       showToast('You are not associated with a society to create/update factories.', 'error');
       setLoading(false);
       return;
     }
-
     const payload = {
-      ...formData,
+      ...data,
       society: user.managed_society.id
     };
-
     try {
       if (isEditing) {
         await axiosInstance.patch(`societies/factories/${factoryId}/`, payload);
@@ -72,7 +71,7 @@ const FactoryForm = () => {
         await axiosInstance.post('societies/factories/', payload);
         showToast('Factory created successfully', 'success');
       }
-      setTimeout(() => navigate('/factories'), 1200); // Give user time to see toast
+      setTimeout(() => navigate('/factories'), 1200);
     } catch (error) {
       showToast(isEditing ? 'Failed to update factory' : 'Failed to create factory', 'error');
       console.error('Error saving factory:', error.response?.data || error.message);
@@ -117,21 +116,23 @@ const FactoryForm = () => {
           {isEditing ? 'Edit Factory' : 'Add New Factory'}
         </h1>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700">
               Factory Name
             </label>
             <input
+              {...register('name', {
+                required: 'Factory name is required',
+                minLength: { value: 2, message: 'Min 2 characters' },
+                maxLength: { value: 100, message: 'Max 100 characters' },
+              })}
               type="text"
-              name="name"
               id="name"
-              required
-              value={formData.name}
-              onChange={handleChange}
               className="mt-1 block w-full border border-amber-300 rounded-md px-3 py-2 placeholder-gray-800 text-black focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
               placeholder="Factory Name"
             />
+            {errors.name && <p className="text-red-600 text-xs mt-1">{errors.name.message}</p>}
           </div>
 
           <div>
@@ -139,15 +140,17 @@ const FactoryForm = () => {
               County
             </label>
             <input
+              {...register('county', {
+                required: 'County is required',
+                minLength: { value: 2, message: 'Min 2 characters' },
+                maxLength: { value: 100, message: 'Max 100 characters' },
+              })}
               type="text"
-              name="county"
               id="county"
-              required
-              value={formData.county}
-              onChange={handleChange}
               className="mt-1 block w-full border border-amber-300 rounded-md px-3 py-2 placeholder-gray-800 text-black focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
               placeholder="County"
             />
+            {errors.county && <p className="text-red-600 text-xs mt-1">{errors.county.message}</p>}
           </div>
 
           <div>
@@ -155,24 +158,24 @@ const FactoryForm = () => {
               Sub County
             </label>
             <input
+              {...register('sub_county', {
+                required: 'Sub-county is required',
+                minLength: { value: 2, message: 'Min 2 characters' },
+                maxLength: { value: 100, message: 'Max 100 characters' },
+              })}
               type="text"
-              name="sub_county"
               id="sub_county"
-              required
-              value={formData.sub_county}
-              onChange={handleChange}
               className="mt-1 block w-full border border-amber-300 rounded-md px-3 py-2 placeholder-gray-800 text-black focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
               placeholder="Sub County"
             />
+            {errors.sub_county && <p className="text-red-600 text-xs mt-1">{errors.sub_county.message}</p>}
           </div>
 
           <div className="flex items-center">
             <input
+              {...register('is_active')}
               type="checkbox"
-              name="is_active"
               id="is_active"
-              checked={formData.is_active}
-              onChange={handleChange}
               className="h-4 w-4 text-amber-700 border-amber-300 rounded focus:ring-amber-600"
             />
             <label htmlFor="is_active" className="ml-2 block text-sm text-gray-900">
@@ -190,10 +193,10 @@ const FactoryForm = () => {
             </button>
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || isSubmitting}
               className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-amber-700 hover:bg-amber-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600"
             >
-              {loading ? 'Saving...' : isEditing ? 'Update Factory' : 'Create Factory'}
+              {loading || isSubmitting ? 'Saving...' : isEditing ? 'Update Factory' : 'Create Factory'}
             </button>
           </div>
         </form>

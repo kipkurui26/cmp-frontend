@@ -3,22 +3,33 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeftIcon, XCircleIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import AxiosInstance from '../../../utils/AxiosInstance';
 import { useToast } from "../../../context/ToastContext";
+import { useForm } from 'react-hook-form';
 
 const WarehouseEdit = () => {
   const { warehouseId } = useParams();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    name: '',
-    county: '',
-    sub_county: '',
-    licence_number: '',
-    is_active: true,
-  });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const { showToast } = useToast();
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      name: '',
+      county: '',
+      sub_county: '',
+      licence_number: '',
+      is_active: true,
+    },
+    mode: 'onTouched',
+  });
 
   useEffect(() => {
     fetchWarehouse();
@@ -30,7 +41,7 @@ const WarehouseEdit = () => {
     setError(null);
     try {
       const response = await AxiosInstance.get(`warehouse/warehouses/${warehouseId}/`);
-      setFormData({
+      reset({
         name: response.data.name || '',
         county: response.data.county || '',
         sub_county: response.data.sub_county || '',
@@ -45,20 +56,11 @@ const WarehouseEdit = () => {
     }
   };
 
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     setSaving(true);
     setError(null);
     try {
-      await AxiosInstance.patch(`warehouse/warehouses/${warehouseId}/`, formData);
+      await AxiosInstance.patch(`warehouse/warehouses/${warehouseId}/`, data);
       setSuccessMessage('Warehouse updated successfully!');
       showToast('Warehouse updated successfully!', "success");
       setTimeout(() => navigate(`/admin/warehouses/${warehouseId}`), 1200);
@@ -125,61 +127,67 @@ const WarehouseEdit = () => {
       </div>
 
       <div className="bg-white shadow rounded-lg p-4 sm:p-6 max-w-xl mx-auto">
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700">Name</label>
             <input
+              {...register('name', {
+                required: 'Name is required',
+                minLength: { value: 2, message: 'Min 2 characters' },
+                maxLength: { value: 100, message: 'Max 100 characters' },
+              })}
               type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
               className="mt-1 block w-full rounded-md border border-amber-300 px-3 py-2 placeholder-gray-800 text-black focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
               placeholder="Name"
-              required
             />
+            {errors.name && <p className="text-red-600 text-xs mt-1">{errors.name.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">County</label>
             <input
+              {...register('county', {
+                required: 'County is required',
+                minLength: { value: 2, message: 'Min 2 characters' },
+                maxLength: { value: 100, message: 'Max 100 characters' },
+              })}
               type="text"
-              name="county"
-              value={formData.county}
-              onChange={handleInputChange}
               className="mt-1 block w-full rounded-md border border-amber-300 px-3 py-2 placeholder-gray-800 text-black focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
               placeholder="County"
-              required
             />
+            {errors.county && <p className="text-red-600 text-xs mt-1">{errors.county.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Sub County</label>
             <input
+              {...register('sub_county', {
+                required: 'Sub-county is required',
+                minLength: { value: 2, message: 'Min 2 characters' },
+                maxLength: { value: 100, message: 'Max 100 characters' },
+              })}
               type="text"
-              name="sub_county"
-              value={formData.sub_county}
-              onChange={handleInputChange}
               className="mt-1 block w-full rounded-md border border-amber-300 px-3 py-2 placeholder-gray-800 text-black focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
               placeholder="Sub County"
-              required
             />
+            {errors.sub_county && <p className="text-red-600 text-xs mt-1">{errors.sub_county.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Licence Number</label>
             <input
+              {...register('licence_number', {
+                required: 'Licence number is required',
+                minLength: { value: 2, message: 'Min 2 characters' },
+                maxLength: { value: 100, message: 'Max 100 characters' },
+              })}
               type="text"
-              name="licence_number"
-              value={formData.licence_number}
-              onChange={handleInputChange}
               className="mt-1 block w-full rounded-md border border-amber-300 px-3 py-2 placeholder-gray-800 text-black focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
               placeholder="Licence Number"
-              required
             />
+            {errors.licence_number && <p className="text-red-600 text-xs mt-1">{errors.licence_number.message}</p>}
           </div>
           <div className="flex items-center">
             <input
+              {...register('is_active')}
               type="checkbox"
-              name="is_active"
-              checked={formData.is_active}
-              onChange={handleInputChange}
               className="h-4 w-4 text-blue-600 border-amber-300 rounded focus:ring-amber-600"
             />
             <label className="ml-2 block text-sm text-gray-900">Active</label>

@@ -7,6 +7,7 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 import Pagination from '../../../components/Pagination';
 import { useToast } from "../../../context/ToastContext";
+import { useForm } from 'react-hook-form';
 
 const PAGE_SIZE = 10;
 
@@ -15,15 +16,24 @@ const WarehouseList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    county: "",
-    sub_county: "",
-    licence_number: "",
-    is_active: true,
-  });
   const [currentPage, setCurrentPage] = useState(1);
   const { showToast } = useToast();
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    defaultValues: {
+      name: "",
+      county: "",
+      sub_county: "",
+      licence_number: "",
+      is_active: true,
+    },
+    mode: 'onTouched',
+  });
 
   useEffect(() => {
     fetchWarehouses();
@@ -42,19 +52,12 @@ const WarehouseList = () => {
     setLoading(false);
   };
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     try {
-      await axiosInstance.post("warehouse/warehouses/", formData);
+      await axiosInstance.post("warehouse/warehouses/", data);
       showToast("Warehouse created successfully", "success");
       setIsModalOpen(false);
-      setFormData({
-        name: "",
-        county: "",
-        sub_county: "",
-        licence_number: "",
-        is_active: true,
-      });
+      reset();
       fetchWarehouses();
     } catch (error) {
       showToast(error.response?.data?.message || "Failed to create warehouse", "error");
@@ -92,7 +95,10 @@ const WarehouseList = () => {
             </p>
           </div>
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => {
+              setIsModalOpen(true);
+              reset();
+            }}
             className="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium bg-teal-600 text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 w-full sm:w-auto justify-center"
           >
             <PlusIcon className="h-5 w-5 mr-2" />
@@ -203,79 +209,75 @@ const WarehouseList = () => {
         >
           <div className="bg-white rounded-lg p-4 sm:p-6 max-w-xs sm:max-w-md w-full">
             <h2 className="text-lg font-medium mb-4">Add New Warehouse</h2>
-            <form onSubmit={handleFormSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Name
                 </label>
                 <input
+                  {...register('name', {
+                    required: 'Name is required',
+                    minLength: { value: 2, message: 'Min 2 characters' },
+                    maxLength: { value: 100, message: 'Max 100 characters' },
+                  })}
                   type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
                   className="mt-1 block w-full rounded-md border border-amber-300 placeholder-gray-800 text-black px-3 py-2 focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
                   placeholder="Name"
-                  required
                 />
+                {errors.name && <p className="text-red-600 text-xs mt-1">{errors.name.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   County
                 </label>
                 <input
+                  {...register('county', {
+                    required: 'County is required',
+                    minLength: { value: 2, message: 'Min 2 characters' },
+                    maxLength: { value: 100, message: 'Max 100 characters' },
+                  })}
                   type="text"
-                  name="county"
-                  value={formData.county}
-                  onChange={(e) =>
-                    setFormData({ ...formData, county: e.target.value })
-                  }
                   className="mt-1 block w-full rounded-md border border-amber-300 placeholder-gray-800 text-black px-3 py-2 focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
                   placeholder="County"
-                  required
                 />
+                {errors.county && <p className="text-red-600 text-xs mt-1">{errors.county.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Sub County
                 </label>
                 <input
+                  {...register('sub_county', {
+                    required: 'Sub-county is required',
+                    minLength: { value: 2, message: 'Min 2 characters' },
+                    maxLength: { value: 100, message: 'Max 100 characters' },
+                  })}
                   type="text"
-                  name="sub_county"
-                  value={formData.sub_county}
-                  onChange={(e) =>
-                    setFormData({ ...formData, sub_county: e.target.value })
-                  }
                   className="mt-1 block w-full rounded-md border border-amber-300 placeholder-gray-800 text-black px-3 py-2 focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
                   placeholder="Sub County"
-                  required
                 />
+                {errors.sub_county && <p className="text-red-600 text-xs mt-1">{errors.sub_county.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Licence Number
                 </label>
                 <input
+                  {...register('licence_number', {
+                    required: 'Licence number is required',
+                    minLength: { value: 2, message: 'Min 2 characters' },
+                    maxLength: { value: 100, message: 'Max 100 characters' },
+                  })}
                   type="text"
-                  name="licence_number"
-                  value={formData.licence_number}
-                  onChange={(e) =>
-                    setFormData({ ...formData, licence_number: e.target.value })
-                  }
                   className="mt-1 block w-full rounded-md border border-amber-300 placeholder-gray-800 text-black px-3 py-2 focus:outline-none focus:ring-amber-600 focus:border-amber-600 text-sm"
                   placeholder="Licence Number"
-                  required
                 />
+                {errors.licence_number && <p className="text-red-600 text-xs mt-1">{errors.licence_number.message}</p>}
               </div>
               <div className="flex items-center">
                 <input
+                  {...register('is_active')}
                   type="checkbox"
-                  name="is_active"
-                  checked={formData.is_active}
-                  onChange={(e) =>
-                    setFormData({ ...formData, is_active: e.target.checked })
-                  }
                   className="h-4 w-4 text-blue-600 border-amber-300 rounded focus:ring-amber-600"
                 />
                 <label className="ml-2 block text-sm text-gray-900">
@@ -286,8 +288,9 @@ const WarehouseList = () => {
                 <button
                   type="submit"
                   className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 w-full sm:w-auto"
+                  disabled={isSubmitting}
                 >
-                  Save
+                  {isSubmitting ? 'Saving...' : 'Save'}
                 </button>
                 <button
                   type="button"
