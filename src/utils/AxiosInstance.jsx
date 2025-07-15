@@ -18,7 +18,7 @@ export const fetchCsrfToken = async () => {
 };
 
 const axiosInstance = axios.create({
-  baseURL: "https://permit-babubartai3823-pzjh6rio.leapcell.dev/api",
+  baseURL: "https://coffee-server-perm2549803-oyqqi95h.leapcell.dev/api",
   // baseURL: "http://localhost:8000/api",
   withCredentials: true, 
   headers: {

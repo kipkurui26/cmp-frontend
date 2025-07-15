@@ -22,6 +22,7 @@ const PermitDetails = () => {
   const [actionModal, setActionModal] = useState({ show: false, action: null });
   const [rejectionReason, setRejectionReason] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -79,6 +80,7 @@ const PermitDetails = () => {
   };
 
   const handleDownload = async () => {
+    setDownloading(true);
     try {
       if (permitData.status !== 'APPROVED') {
         showToast(`PDF can only be generated for approved permits. Current status: ${permitData.status}`, 'error');
@@ -124,6 +126,8 @@ const PermitDetails = () => {
       } else {
         showToast('An error occurred while downloading the permit.', 'error');
       }
+    } finally {
+      setDownloading(false);
     }
   };
 
@@ -190,10 +194,20 @@ const PermitDetails = () => {
           {permitData.status === 'APPROVED' && (
           <button 
             onClick={handleDownload}
-              className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 w-full sm:w-auto"
+            disabled={downloading}
+            className={`inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 w-full sm:w-auto ${downloading ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
-            <DocumentArrowDownIcon className="h-5 w-5 mr-2" />
-            Download Permit
+            {downloading ? (
+              <>
+                <span className="animate-spin mr-2 h-4 w-4 border-b-2 border-gray-700 rounded-full"></span>
+                Downloading...
+              </>
+            ) : (
+              <>
+                <DocumentArrowDownIcon className="h-5 w-5 mr-2" />
+                Download Permit
+              </>
+            )}
           </button>
           )}
         </div>

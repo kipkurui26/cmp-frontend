@@ -45,8 +45,8 @@ export const NotificationProvider = ({ children }) => {
   }, [fetchNotifications]);
 
   const setupWebSocket = useCallback(() => {
-    if (isPublicPage) return null; // Don't connect websocket on public pages
-    const wsUrl = "wss://permit-babubartai3823-pzjh6rio.leapcell.dev/ws/notifications/";
+    if (isPublicPage) return null;
+    const wsUrl = "wss://coffee-server-perm2549803-oyqqi95h.leapcell.dev/ws/notifications/";
     // const wsUrl = "ws://localhost:8000/ws/notifications/";
     const socket = new window.WebSocket(wsUrl);
     setWs(socket);

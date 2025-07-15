@@ -221,12 +221,12 @@ const AdminProfile = () => {
                 {user.role}
               </div>
             </div>
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <label className={labelClass}>Last Login</label>
               <div className="text-gray-900 text-sm px-3 py-2 bg-gray-50 rounded-md border border-transparent cursor-not-allowed">
                 {user.last_login ? new Date(user.last_login).toLocaleString() : '-'}
               </div>
-            </div>
+            </div> */}
           </section>
           {isEditing && (
             <div className="mt-6 flex gap-4">
