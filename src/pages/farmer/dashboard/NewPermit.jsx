@@ -55,7 +55,9 @@ const NewPermit = () => {
   const fetchFactories = async () => {
     try {
       // Use the new active_factories endpoint
-      const response = await AxiosInstance.get(`/societies/factories/active_factories/`);
+      const response = await AxiosInstance.get(
+        `/societies/factories/active_factories/`
+      );
       setFactories(response.data);
     } catch (error) {
       console.error("Error fetching factories:", error);
@@ -66,7 +68,9 @@ const NewPermit = () => {
   const fetchWarehouses = async () => {
     try {
       // Use the new active_warehouses endpoint
-      const response = await AxiosInstance.get(`/warehouse/warehouses/active_warehouses/`);
+      const response = await AxiosInstance.get(
+        `/warehouse/warehouses/active_warehouses/`
+      );
       setWarehouses(response.data);
     } catch (error) {
       console.error("Error fetching warehouses:", error);
@@ -110,8 +114,16 @@ const NewPermit = () => {
   };
 
   const handleSubmit = async () => {
-    if (!user?.managed_society?.id || !locationDetails.factory_id || !locationDetails.warehouse_id || coffeeDetailsList.length === 0) {
-      showToast("Please complete all required steps before submitting.", "error");
+    if (
+      !user?.managed_society?.id ||
+      !locationDetails.factory_id ||
+      !locationDetails.warehouse_id ||
+      coffeeDetailsList.length === 0
+    ) {
+      showToast(
+        "Please complete all required steps before submitting.",
+        "error"
+      );
       return;
     }
 
@@ -133,8 +145,14 @@ const NewPermit = () => {
       showToast("Permit application submitted successfully!", "success");
       setTimeout(() => navigate("/"), 1200);
     } catch (error) {
-      const backendErrorMessage = error.response?.data?.error || error.response?.data?.detail || error.message;
-      showToast(`Failed to submit permit application: ${backendErrorMessage}`, "error");
+      const backendErrorMessage =
+        error.response?.data?.error ||
+        error.response?.data?.detail ||
+        error.message;
+      showToast(
+        `Failed to submit permit application: ${backendErrorMessage}`,
+        "error"
+      );
     } finally {
       setLoading(false);
     }
@@ -189,7 +207,10 @@ const NewPermit = () => {
         setNumberOfBags("");
       }
     } else {
-      showToast("Please select a coffee grade and enter a valid number of bags.", "error");
+      showToast(
+        "Please select a coffee grade and enter a valid number of bags.",
+        "error"
+      );
     }
   };
 
@@ -581,42 +602,42 @@ const NewPermit = () => {
                   </div>
                 )}
               </div>
-                </div>
-              <div className="flex justify-end mt-6">
-                <button
-                  type="button"
-                  onClick={handleSubmit}
-                  className="inline-flex justify-center rounded-md bg-teal-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <span className="flex items-center">
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      Submitting...
-                    </span>
-                  ) : (
-                    "Submit Application"
-                  )}
-                </button>
+            </div>
+            <div className="flex justify-end mt-6">
+              <button
+                type="button"
+                onClick={handleSubmit}
+                className="inline-flex justify-center rounded-md bg-teal-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={loading}
+              >
+                {loading ? (
+                  <span className="flex items-center">
+                    <svg
+                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Submitting...
+                  </span>
+                ) : (
+                  "Submit Application"
+                )}
+              </button>
             </div>
           </div>
         );
@@ -641,21 +662,37 @@ const NewPermit = () => {
             onClick={() => navigate(-1)}
             className="inline-flex items-center px-3 py-2 rounded-md bg-white text-gray-700 shadow-sm border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-500"
           >
-            <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            <svg
+              className="h-5 w-5 mr-2"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
             Back
           </button>
         </div>
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">New Permit Application</h1>
-          <p className="mt-1 text-sm text-gray-500">Follow the simple steps below to apply for a permit.</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+            New Permit Application
+          </h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Follow the simple steps below to apply for a permit.
+          </p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
           {/* Steps Sidebar - sticky on mobile, sidebar on desktop */}
           <div className="w-full lg:w-1/4 bg-white rounded-lg shadow-sm p-4 sm:p-6 space-y-4 h-fit sticky top-0 z-10">
-            <h2 className="text-base sm:text-lg font-semibold text-gray-900">Application Steps</h2>
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900">
+              Application Steps
+            </h2>
             <nav className="flex flex-row lg:flex-col space-x-4 lg:space-x-0 lg:space-y-4">
               {steps.map((step) => (
                 <div key={step.number} className="flex items-center flex-1">
@@ -670,7 +707,9 @@ const NewPermit = () => {
                   </div>
                   <div
                     className={`ml-2 sm:ml-3 text-xs sm:text-sm font-medium ${
-                      currentStep === step.number ? "text-teal-600" : "text-gray-900"
+                      currentStep === step.number
+                        ? "text-teal-600"
+                        : "text-gray-900"
                     }`}
                   >
                     {step.name}
@@ -690,14 +729,6 @@ const NewPermit = () => {
               {currentStep === 2 ? (
                 <div className="flex flex-col sm:flex-row justify-between gap-3">
                   {/* On small screens, Next first, then Previous */}
-                  <button
-                    type="button"
-                    onClick={nextStep}
-                    className="inline-flex justify-center rounded-md bg-teal-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-teal-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 w-full sm:w-auto order-1 sm:order-none"
-                    disabled={loading}
-                  >
-                    Next Step
-                  </button>
                   {currentStep > 1 && (
                     <button
                       type="button"
@@ -708,6 +739,14 @@ const NewPermit = () => {
                       Previous Step
                     </button>
                   )}
+                  <button
+                    type="button"
+                    onClick={nextStep}
+                    className="inline-flex justify-center rounded-md bg-teal-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-teal-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 w-full sm:w-auto order-1 sm:order-none"
+                    disabled={loading}
+                  >
+                    Next Step
+                  </button>
                 </div>
               ) : (
                 <div className="flex flex-col sm:flex-row justify-between gap-3">

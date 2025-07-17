@@ -46,8 +46,8 @@ export const NotificationProvider = ({ children }) => {
 
   const setupWebSocket = useCallback(() => {
     if (isPublicPage) return null;
-    const wsUrl = "wss://coffee-server-perm2549803-oyqqi95h.leapcell.dev/ws/notifications/";
-    // const wsUrl = "ws://localhost:8000/ws/notifications/";
+    // const wsUrl = "wss://coffee-server-perm2549803-oyqqi95h.leapcell.dev/ws/notifications/";
+    const wsUrl = "ws://localhost:8000/ws/notifications/";
     const socket = new window.WebSocket(wsUrl);
     setWs(socket);
 
